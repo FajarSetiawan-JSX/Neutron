@@ -7,7 +7,7 @@ import {
     Users,
     GraduationCap
 } from "lucide-vue-next";
-
+const emit = defineEmits(['update', 'hapus']);
 defineProps({
     kelas: {
         type: Object,
@@ -78,7 +78,7 @@ onBeforeUnmount(() => {
                         class="absolute right-0 mt-2 w-40 overflow-hidden rounded-xl border border-white/10 bg-[#222] shadow-2xl"
                     >
                         <button
-                            @click="console.log('edit kelas')"
+                            @click="emit('update', kelas)"
                             class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-white/10"
                         >
                             <Pencil class="h-4 w-4 text-yellow-400" />
@@ -86,7 +86,7 @@ onBeforeUnmount(() => {
                         </button>
 
                         <button
-                            @click="console.log('hapus kelas')"
+                            @click="emit('hapus', kelas.id)"
                             class="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition hover:bg-red-500/10"
                         >
                             <Trash2 class="h-4 w-4" />
@@ -100,7 +100,7 @@ onBeforeUnmount(() => {
             <div
                 class="absolute bottom-4 left-4 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur"
             >
-                SMP
+                {{ kelas.singkatan }}
             </div>
 
             <div
@@ -117,11 +117,11 @@ onBeforeUnmount(() => {
                 <p
                     class="text-[11px] font-bold uppercase tracking-[0.25em] text-red-500"
                 >
-                    Tingkat · Sekolah Menengah Pertama
+                    Tingkat {{ kelas.tingkat }} · {{ kelas.jenjang }}
                 </p>
 
                 <h2 class="mt-1 text-2xl font-bold text-white">
-                    11 MIPA 1
+                    {{ kelas.nama }}
                 </h2>
             </div>
 

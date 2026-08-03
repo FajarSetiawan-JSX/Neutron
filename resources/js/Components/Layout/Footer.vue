@@ -14,6 +14,6 @@ const user = usePage().props?.auth?.user;
                 Have a productive day.
             </p>
         </div>
-        <p class="text-xs text-red-200 font-anonymous text-center">2026 A site by Fajar Setiawan</p>
+        <p class="text-xs text-red-400 font-anonymous text-center">2026 A site by Fajar Setiawan</p>
     </div>
 </template>

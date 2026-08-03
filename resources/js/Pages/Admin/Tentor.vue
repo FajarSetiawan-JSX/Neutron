@@ -13,6 +13,9 @@ import { UsersRound } from "lucide-vue-next";
 import { onMounted, ref } from 'vue';
 import { useCounter } from '@/Helper.js/counter';
 import Create from '@/Components/Admin/Tentor/Create.vue';
+import { eror, success } from '@/Helper.js/Toast';
+import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
+import axios from 'axios';
 
 const count = useCounter();
 const colors = [
@@ -77,12 +80,56 @@ const centerTextPlugin = {
     ctx.restore();
   },
 };
-
-const user = usePage().props?.auth?.user;
-const modalcreate = ref(false);
 ChartJS.register( ArcElement, Tooltip, Legend, centerTextPlugin);
 
+const user = usePage().props?.auth?.user;
+const loading = ref(false);
+const search = ref('');
+const tentors = ref({});
+const links = ref({});
+const modalcreate = ref(false);
+async function get(page = 1) {
+    try{
+        loading.value = true;
+        const response = await axios.get('/api/Admin/tentors', {
+            params:{
+                page: page,
+                search: search.value
+            }
+        });
+        tentors.value = response?.data?.data;
+        links.value = response?.data?.meta;
+    }catch(error){
+        eror(error?.response?.status, error?.response?.data?.message);
+    }finally{
+        loading.value = false;
+    }
+}
+function handleprevpage(page){
+    if(page){
+        get(page);
+    }
+}
+function handlenextpage(page){
+    if(page){
+        get(page);
+    }
+}
+function handlepage(page){
+    if(page){
+        get(page);
+    }
+}
+function handlesuccescreate(){
+    modalcreate.value = false;
+    success('Berhasil menambah pengajar baru🫡');
+}
+
+function wali(){
+    get();
+}
 onMounted(()=>{
+    get()
     count.start(16, 80);
 })
 </script>
@@ -103,7 +150,7 @@ onMounted(()=>{
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">
@@ -111,7 +158,7 @@ onMounted(()=>{
                     🔔
                 </button>
                 <img
-                    :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
+                    :src="user?.avatar ? `/storage/${user?.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
                     class="w-10 h-10 rounded-full"
                 />
                 <div class="text-sm font-primary text-white hidden md:grid md:grid-cols-1">
@@ -148,15 +195,26 @@ onMounted(()=>{
                 </div>
             </div>
         </section>
-
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 md:gap-5 mb-3">
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-        </section>
-        <PaginationCard />
-        <Create v-if="modalcreate" @close="modalcreate = false" />
+        <template v-if="!loading">
+            <template v-if="tentors.length > 0">
+                <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 md:gap-5 mb-3">
+                    <Card v-for="tentor in tentors" :key="tentor.id" :tentor="tentor" @kelas="wali" @mapel="wali" />
+                </section>
+            </template>
+            <template v-else>
+                <h1 class="my-5 font-anonymous text-red-500 text-center">Tidak ada data tentor</h1>
+            </template>
+        </template>
+        <template v-else>
+            <div class="h-60 w-full flex items-center justify-center">
+                <div>
+                    <PrimaryLoading size="50" :class="'stroke-emerald-500'" />
+                    <h1 class="my-5 font-anonymous text-red-500 text-center">Fetching data</h1>
+                </div>
+            </div>
+        </template>
+        <PaginationCard :links="links" :name="'Tentor'" @next="handlenextpage" @page="handlepage" @prev="handleprevpage" />
+        <Create v-if="modalcreate" @close="modalcreate = false" @succes="handlesuccescreate" />
     </Auth>
 </template>
 

@@ -20,7 +20,7 @@ class MapelsController extends Controller
         if ($request->filled('search')) {
             $mapels->where('nama', 'like', '%' . $request->search . '%');
         }
-        return GetMapelsResource::collection($mapels->paginate(1)->withQueryString());
+        return GetMapelsResource::collection($mapels->paginate(6)->withQueryString());
     }
 
     /**

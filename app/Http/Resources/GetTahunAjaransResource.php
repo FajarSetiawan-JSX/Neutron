@@ -19,7 +19,7 @@ class GetTahunAjaransResource extends JsonResource
             'tahun' => $this->tahun,
             'active' => $this->active,
             'tanggal' => $this->created_at,
-            'siswa' => 500 //$this->logs()->count() ?? 500
+            'siswa' => $this->logs()->count() ?? 0
         ];
     }
 }

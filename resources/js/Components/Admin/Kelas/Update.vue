@@ -8,7 +8,7 @@ import { eror, success } from '@/Helper.js/Toast';
 import PrimaryLoading from "@/Components/21Dev/PrimaryLoading.vue";
 
 const emit = defineEmits(['close', 'success']);
-const props = defineProps(['mapel']);
+const props = defineProps(['kelas']);
 const loading = ref(false);
 const loadingTingkat = ref(false);
 const form = ref({
@@ -44,7 +44,7 @@ async function getTingkat() {
         loadingTingkat.value = false;
     }
 }
-watch(()=>props.mapel, (newmapel)=>{
+watch(()=>props.kelas, (newmapel)=>{
     if(newmapel){
         getTingkat();
         err.value = {};

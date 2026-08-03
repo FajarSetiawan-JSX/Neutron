@@ -11,6 +11,6 @@ class TahunAjaran extends Model
 {
     public function logs(): HasMany
     {
-        return $this->hasMany(LogSiswa::class, 'tahun_id');
+        return $this->hasMany(LogKelas::class, 'tahun_id');
     }
 }

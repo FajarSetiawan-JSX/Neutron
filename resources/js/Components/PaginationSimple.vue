@@ -30,7 +30,7 @@ watch(()=>props.links, (newlinks)=>{
             <span>Previous</span>
         </button>
         <div class="font-anonymous font-semibold text-black">
-            <span class="text-black/50">{{ links?.from }}</span> / <span class="text-black/50">{{ links?.per_page }}</span> of <span class="text-black/50">{{ links?.total }}</span>
+            <span class="text-black/50">{{ links?.from }}</span> / <span class="text-black/50">{{ links?.to }}</span> of <span class="text-black/50">{{ links?.total }}</span>
         </div>
         <button type="button" @click="next(links?.current_page)" :disabled="links?.current_page === links?.last_page" :class="links?.current_page === links?.last_page ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg outline-1 outline-gray-300 flex items-center gap-x-2 font-anonymous text-black active:scale-95 transition-all duration-300">
             <span>Next</span>

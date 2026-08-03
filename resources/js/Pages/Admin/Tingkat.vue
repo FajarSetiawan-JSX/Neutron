@@ -49,7 +49,7 @@ function handledropdown (id){
                     🔔
                 </button>
                 <img
-                    :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
+                    :src="user?.avatar ? `/storage/${user?.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
                     class="w-10 h-10 rounded-full"
                 />
                 <div class="text-sm font-primary text-white hidden md:grid md:grid-cols-1">
@@ -67,7 +67,7 @@ function handledropdown (id){
                 </div>
             </div>
             <div class="mt-10 space-y-8">
-                <section v-for="level in props.levels" :key="level.id" :class="level.id === 1 ? aurora : level.id ? nature : ocean" class="rounded-3xl border border-slate-200 p-6 shadow-sm">
+                <section data-aos="fade-up" :data-aos-delay="index * 300" v-for="(level, index) in props.levels" :key="level.id" :class="level.id === 1 ? aurora : level.id ? nature : ocean" class="rounded-3xl border border-slate-200 p-6 shadow-sm">
                     <!-- Header Jenjang -->
                     <button @click="handledropdown(level.id)" type="button" class="flex items-center justify-between text-slate-800 w-full">
                         <div class="flex gap-4">
@@ -76,7 +76,7 @@ function handledropdown (id){
                             </div>
                             <div>
                                 <h2 class="font-bold text-lg">{{ level.nama }} ({{ level.slug }})</h2>
-                                <p class="text-sm text-gray-500 mt-1 text-left">{{ level.subtitle }} • 3 Jenjang Aktif</p>
+                                <p class="text-sm text-gray-500 mt-1 text-left">{{ level.subtitle }} • {{ level?.tingkat?.length }} Jenjang Aktif</p>
                             </div>
                         </div>
                         <div class="text-black">

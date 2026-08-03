@@ -18,6 +18,7 @@ import Update from '@/Components/Admin/Mapel/Update.vue';
 import Delete from '@/Components/Admin/Mapel/Delete.vue';
 
 const user = usePage().props?.auth?.user;
+const props = defineProps(['label', 'data']);
 const modalcreate = ref(false);
 const modalupdate = ref(false);
 const modaldelete = ref(false);
@@ -40,16 +41,15 @@ const colors = [
     "#f97316", // orange
     "#84cc16", // lime
 ];
-const targetData = [8, 12, 5, 10, 7];
 const backgroundColor = Array.from({ length: 5 }, () => {
     return colors[Math.floor(Math.random() * colors.length)];
 });
 const data = ref({
-    labels: ["Matematika", "Fisika", "Kimia", "Biologi", "B. Inggris"],
+    labels: [],
     datasets: [
         {
-            data: [0, 0, 0, 0, 0],
-            label: ["B. Inggris"],
+            data: [],
+            label: ["Jumlah siswa : "],
             backgroundColor: backgroundColor,
             borderRadius: 8,
         },
@@ -164,11 +164,11 @@ onMounted(() => {
     get()
     setTimeout(() => {
         data.value = {
-            ...data.value,
+            labels: props.label,
             datasets: [
                 {
                     ...data.value.datasets[0],
-                    data: targetData,
+                    data: props.data,
                 },
             ],
         };
@@ -199,7 +199,7 @@ onMounted(() => {
                     🔔
                 </button>
                 <img
-                    :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
+                    :src="user?.avatar ? `/storage/${user?.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
                     class="w-10 h-10 rounded-full"
                 />
                 <div class="text-sm font-primary text-white hidden md:grid md:grid-cols-1">

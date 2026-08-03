@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('nis')->unique();
             $table->string('sekolah');
             $table->string('alamat')->nullable();
-            $table->string('phone')->nullable();
+            $table->text('phone');
+            $table->string('phone_hash', 64)->unique();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

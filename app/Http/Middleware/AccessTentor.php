@@ -17,8 +17,17 @@ class AccessTentor
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
+        if (!$user) {
+            return abort(401, 'Harap login terlebih dahulu');
+        }
         if ($user->role->nama != 'Pengajar') {
-            return abort(404);
+            return abort(404, 'Anda tidak memiliki akses ke halaman pengajar');
+        }
+        if ($user->active == false) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->with('error', 'Akun Anda telah dinonaktifkan oleh Admin.');
         }
         return $next($request);
     }

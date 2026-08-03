@@ -17,7 +17,7 @@ import Create from '@/Components/Admin/Tahun/Create.vue';
 import Update from '@/Components/Admin/Tahun/Update.vue';
 
 const user = usePage().props?.auth?.user;
-const props = defineProps(['tahun']);
+const props = defineProps(['tahun', 'label', 'jumlah']);
 const colors = [
     "#ef4444", // merah
     "#3b82f6", // biru
@@ -30,12 +30,11 @@ const colors = [
     "#f97316", // orange
     "#84cc16", // lime
 ];
-const targetData = [302, 250, 370, 410, 227];
 const backgroundColor = Array.from({ length: 5 }, () => {
     return colors[Math.floor(Math.random() * colors.length)];
 });
 const data = ref({
-    labels: ["2021/2022", "2022/2023", "2023/2024", "2024/2025", "2025/2026"],
+    labels: ["", "", "", "", ""],
     datasets: [
         {
             data: [0, 0, 0, 0, 0],
@@ -129,11 +128,11 @@ onMounted(()=>{
     get()
     setTimeout(() => {
         data.value = {
-            ...data.value,
+            labels: props.label,
             datasets: [
                 {
                     ...data.value.datasets[0],
-                    data: targetData,
+                    data: props.jumlah,
                 },
             ],
         };
@@ -161,7 +160,7 @@ onMounted(()=>{
                     🔔
                 </button>
                 <img
-                    :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
+                    :src="user?.avatar ? `/storage/${user?.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=DC2626&color=fff`"
                     class="w-10 h-10 rounded-full"
                 />
                 <div class="text-sm font-primary text-white hidden md:grid md:grid-cols-1">
@@ -177,13 +176,13 @@ onMounted(()=>{
                 <div class="relative z-10 p-5"> 
                     <div class="h-20 md:h-28 lg:h-32" />
                     <div>
-                        <h3 class="font-semibold text-lg md:text-xl lg:text-2xl font-primary text-white z-50 max-w-max px-2.5 bg-black/50 py-1.5 backdrop-opacity-10 rounded-full">Tahun Ajaran</h3>
-                        <h4 class="text-white font-primary text-4xl font-bold my-3 px-2.5">{{ props?.tahun?.tahun }}</h4>
+                        <h3 data-aos="fade-down" class="font-semibold text-lg md:text-xl lg:text-2xl font-primary text-white z-50 max-w-max px-2.5 bg-black/50 py-1.5 backdrop-opacity-10 rounded-full">Tahun Ajaran</h3>
+                        <h4 data-aos="fade-up" class="text-white font-primary text-4xl font-bold my-3 px-2.5">{{ props?.tahun?.tahun }}</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                            <div class="text-xs md:text-sm font-primary text-white/50 font-normal">
+                            <div data-aos="fade-left" class="text-xs md:text-sm font-primary text-white/50 font-normal">
                                 Buat dan kelola Tahun Ajaran sebagai dasar pengelolaan kelas dan siswa. Tahun ajaran baru memudahkan proses kenaikan kelas, pembentukan kelas, serta menjaga riwayat data akademik tetap terorganisir.
                             </div>
-                            <div class="md:flex md:justify-end md:items-center">
+                            <div data-aos="fade-right" class="md:flex md:justify-end md:items-center">
                                 <GradientButton color="black" type="button" @click="modalcreate = true" class="flex items-center justify-center gap-2 font-primary py-3 px-6 text-white rounded-xl">
                                     <Plus class="w-5 h-5"/> Buat Tahun Ajaran Baru
                                 </GradientButton>
