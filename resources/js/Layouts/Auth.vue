@@ -1,11 +1,10 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref} from 'vue'
 import { usePage } from '@inertiajs/vue3';
 import Footer from '@/Components/Layout/Footer.vue';
 import NavLink from '@/Components/NavLink.vue';
 import DropDown from '@/Components/Layout/DropDown.vue';
 import LogoutButton from '@/Components/LogoutButton.vue';
-import AnimatedGlowingSearchBar from '@/Components/21Dev/AnimatedGlowingSearchBar.vue';
 
 const user = usePage().props?.auth?.user;
 const dropdown = ref('')
@@ -34,7 +33,7 @@ const closeSidebar = () => {
 </script>
 
 <template>
-    <div class="flex h-screen overflow-hidden bg-gradient-to-br from-red-50 via-white to-red-100 text-gray-800">
+    <div class="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-100 text-gray-800 lg:flex lg:h-screen lg:overflow-hidden">
         <div v-if="sidebarOpen" @click="closeSidebar" class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"/>
         <aside
             :class="[
@@ -137,6 +136,25 @@ const closeSidebar = () => {
                                     </svg>
                                     Kelas
                                 </NavLink>
+                                <NavLink :href="route('admin.kelas.naik')" :active="route().current('admin.kelas.naik')">
+                                    <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" 
+                                        width="15px" height="15px" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve">
+                                    <path d="M41.4,39.7l-0.9,0.9c-1,1-2.3,1.5-3.7,1.5h-2.6c-2.4,0-5-1.9-5-5.2v-2.5c0-2,0.9-3.2,1.4-3.9l10.8-11
+                                        c0.3-0.3,0.6-1,0.6-1.4V9.8C42,7.2,39.8,5,37.2,5H11.6C9,5,6.8,7.4,6.8,9.8H5.2C3.4,9.8,2,11.3,2,13.1s1.4,3.2,3.2,3.2h1.6v6.5H5.2
+                                        C3.4,22.8,2,24.2,2,26s1.4,3.2,3.2,3.2h1.6v6.5H5.2c-1.8,0-3.2,1.5-3.2,3.2c0,1.8,1.4,3.2,3.2,3.2h1.6c0,3.2,2.2,4.8,4.8,4.8H30h7.2
+                                        c2.6,0,4.8-2.2,4.8-4.8V40C42,39.5,41.8,39.4,41.4,39.7z M33.2,17.1c0,0.9-0.7,1.6-1.6,1.6h-16c-0.9,0-1.6-0.7-1.6-1.6v-1.6
+                                        c0-0.9,0.7-1.6,1.6-1.6h16c0.9,0,1.6,0.7,1.6,1.6V17.1z M26,36.5c0,0.9-0.7,1.6-1.6,1.6h-8.8c-0.9,0-1.6-0.7-1.6-1.6v-1.6
+                                        c0-0.9,0.7-1.6,1.6-1.6h8.8c0.9,0,1.6,0.7,1.6,1.6V36.5z M28.4,26.8c0,0.9-0.7,1.6-1.6,1.6H15.6c-0.9,0-1.6-0.7-1.6-1.6v-1.6
+                                        c0-0.9,0.7-1.6,1.6-1.6h11.2c0.9,0,1.6,0.7,1.6,1.6V26.8z"/>
+                                    <path d="M49.5,22.4l-1-1c-0.6-0.6-1.6-0.6-2.2,0L34.1,34C34,34,34,34.2,34,34.2v2.7c0,0.2,0,0.4,0.2,0.4h2.6
+                                        c0.1,0,0.2-0.1,0.3-0.1l12.3-12.4C50.2,24.1,50.2,23.1,49.5,22.4z"/>
+                                    </svg>
+                                    Naik Kelas
+                                </NavLink>
+                                <NavLink :href="route('admin.rombel')" :active="route().current('admin.rombel')">
+                                    <svg class="fill-current" width="15px" height="15px" viewBox="0 0 24 24" version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg"><path d="M12 14c1.381 0 2.631-.56 3.536-1.465.904-.904 1.464-2.154 1.464-3.535s-.56-2.631-1.464-3.535c-.905-.905-2.155-1.465-3.536-1.465s-2.631.56-3.536 1.465c-.904.904-1.464 2.154-1.464 3.535s.56 2.631 1.464 3.535c.905.905 2.155 1.465 3.536 1.465zM20 15c.69 0 1.315-.279 1.768-.731.453-.452.732-1.077.732-1.769 0-.69-.279-1.315-.732-1.768-.453-.453-1.078-.732-1.768-.732-.691 0-1.316.279-1.769.732-.452.453-.731 1.078-.731 1.768 0 .691.279 1.316.731 1.769s1.078.731 1.769.731zM20 15.59c-1.331 0-2.332.406-2.917.968-1.115-.917-2.878-1.558-5.083-1.558-2.266 0-3.995.648-5.092 1.564-.596-.565-1.608-.974-2.908-.974-2.188 0-3.5 1.09-3.5 2.182 0 .545 1.312 1.092 3.5 1.092.604 0 1.146-.051 1.623-.133l-.04.27c0 1 2.406 2 6.417 2 3.762 0 6.417-1 6.417-2l-.02-.255c.463.073.995.118 1.603.118 2.051 0 3.5-.547 3.5-1.092 0-1.092-1.373-2.182-3.5-2.182zM4 15c.69 0 1.315-.279 1.768-.732.453-.453.732-1.078.732-1.768 0-.689-.279-1.314-.732-1.768-.453-.452-1.078-.732-1.768-.732-.691 0-1.316.28-1.769.732-.452.454-.731 1.079-.731 1.768 0 .69.279 1.315.731 1.768.453.453 1.078.732 1.769.732z"/></svg>
+                                    Rombel
+                                </NavLink>
                             </div>
                         </template>
                     </Transition>
@@ -184,11 +202,11 @@ const closeSidebar = () => {
                     Log out
                 </LogoutButton>
             </nav>
-            <div class="mt-auto">
+            <div class="mt-auto mb-14 xl:mb-0">
                 <Footer />
             </div>
         </aside>
-        <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <div class="min-w-0 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden">
             <header class="h-20 shrink-0 border-b border-slate-200 shadow-sm"
                     style="background-image: url('/assets/header.svg');
                     background-size: cover;
@@ -199,8 +217,8 @@ const closeSidebar = () => {
                     <slot name="header" :toggle-sidebar="toggleSidebar" />
                 </div>
             </header>
-            <main class="flex-1 overflow-y-auto">
-                <div class="p-4 sm:p-6 lg:p-8 scroll-smooth">
+            <main class="overflow-x-hidden lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
+                <div class="p-4 sm:p-6 lg:p-8 mb-14 xl:mb-0">
                     <slot />
                 </div>
             </main>

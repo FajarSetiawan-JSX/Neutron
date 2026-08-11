@@ -18,4 +18,8 @@ class Tingkat extends Model
     {
         return $this->hasMany(Kelas::class, 'tingkat_id');
     }
+    public function rombel(): HasMany
+    {
+        return $this->hasMany(Rombel::class, 'tingkat_id');
+    }
 }

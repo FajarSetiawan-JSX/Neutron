@@ -7,6 +7,7 @@ import Toogle from "@/Components/21Dev/Toogle.vue";
 import ChangePass from "./ChangePass.vue";
 import Kelas from "./Kelas.vue";
 import Mapel from "./Mapel.vue";
+import Menu from "@/Components/Menu.vue";
 
 const props = defineProps(['tentor']);
 const emit = defineEmits(['kelas', 'mapel']);
@@ -99,10 +100,10 @@ onBeforeUnmount(() => {
                             Mapel
                         </button>
 
-                        <button class="flex w-full items-center gap-3 px-4 py-3 text-sm transition hover:bg-sky-50 hover:text-sky-600">
+                        <Menu :href="route('admin.tentor.rombel', props?.tentor?.id)" :class="'flex w-full items-center gap-3 px-4 py-3 text-sm transition hover:bg-sky-50 hover:text-sky-600'">
                             <CirclePile :size="17" />
                             Rombel
-                        </button>
+                        </Menu>
 
                         <button type="button" @click="modalchangepass = true" class="flex w-full items-center gap-3 px-4 py-3 text-sm transition hover:bg-emerald-100 hover:text-emerald-600">
                             <Key :size="17" />

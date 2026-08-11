@@ -1,0 +1,7 @@
+CARA RUNNING LEWAT NGROK
+1. UNCOMENT YANG NGROK, APP URL, SANCTUM_STATEFUL_DOMAINS, DAN ASSET URL
+2. UNCOMENT YANG APP di AppService Provider
+3. UNCOMENT BASE di viteconfig.js
+4. Jalnin npm run build
+5. Jalaninn php artisan serve --host=0.0.0.0 --port=8000
+6. Jalanin ngrok http 8000

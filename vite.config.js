@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+    //base: 'https://unaccusable-uncleverly-lewis.ngrok-free.dev/build/',
     plugins: [
         tailwindcss(),
         laravel({

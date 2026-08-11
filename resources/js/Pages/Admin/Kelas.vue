@@ -83,9 +83,7 @@ async function get(page = 1) {
         })
         kelases.value = response?.data?.data;
         links.value = response?.data?.meta;
-        console.log(response?.data);
     }catch(error){
-        console.log(error?.response);
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{
         loading.value = false;
@@ -196,6 +194,7 @@ onMounted(()=>{
                 </GradientButton>
             </div>
         </section>
+
         <section class="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 my-5">
             <div class="bg-[#151210] lg:col-span-2 p-5 rounded-lg shadow-sm hover:shadow-2xl transition-all duration-500 hover:bg-[#26211D]">
                 <div class="h-96">
@@ -203,18 +202,18 @@ onMounted(()=>{
                 </div>
             </div>
             <div class="grid grid-cols-1 gap-3">
-                <div data-aos="fade-up" class="rounded-lg bg-linear-to-r from-red-500 to-red-950 font-primary text-white p-4 overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                <div data-aos="fade-up" data-aos-offset="0" class="rounded-lg bg-linear-to-r from-red-500 to-red-950 font-primary text-white p-4 overflow-hidden hover:-translate-y-1 transition-all duration-300">
                     <h1 class="font-semibold text-md">TOTAL KELAS</h1>
                     <h1 class="font-bold text-2xl">{{ props?.kelas }}</h1>
                 </div>
-                <div data-aos="zoom-in" class="relative rounded-lg bg-white overflow-hidden hover:scale-105 transition-all duration-300">
+                <div data-aos="zoom-in" data-aos-offset="0" class="relative rounded-lg bg-white overflow-hidden hover:scale-105 transition-all duration-300">
                     <div class="absolute inset-y-0 left-0 w-1 bg-red-500" />
                     <div class="p-4">
                         <h1 class="font-semibold text-md">TINGKAT</h1>
                         <h1 class="font-bold text-2xl text-red-500">{{ props?.tingkat }}</h1>
                     </div>
                 </div>
-                <div data-aos="fade-down" class="relative rounded-lg bg-white overflow-hidden hover:translate-y-1 transition-all duration-300">
+                <div data-aos="fade-down" data-aos-offset="0" class="relative rounded-lg bg-white overflow-hidden hover:translate-y-1 transition-all duration-300">
                     <div class="absolute inset-y-0 left-0 w-1 bg-emerald-300" />
                     <div class="p-4">
                         <h1 class="font-semibold text-md">JENJANG</h1>
@@ -223,9 +222,10 @@ onMounted(()=>{
                 </div>
             </div>
         </section>
+
         <template v-if="!loading">
             <template v-if="kelases.length > 0">
-                <section class="my-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <section class="my-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     <template v-for="kelas in kelases" :key="kelas.id">
                         <Card :kelas="kelas" @update="handleupdate" @hapus="handledelete" />
                     </template>

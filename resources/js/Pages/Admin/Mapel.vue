@@ -209,7 +209,7 @@ onMounted(() => {
             </div>
         </template>
         <section>
-            <div class="flex items-center md:justify-between">
+            <div class="flex items-center md:justify-between flex-wrap gap-y-1.5">
                 <div>
                     <h3 class="text-2xl md:text-4xl font-semibold font-primary text-black mb-1.5">Menejemen Mapel</h3>
                     <p class="md:text-sm text-xs font-primary text-black/50">Kelola Mata Pelajaran dengan statistik akurat.</p>
@@ -223,6 +223,7 @@ onMounted(() => {
         <section class="my-6 grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10">
             <Bar :data="data" :options="options" />
         </section>
+
         <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-5 lg:gap-7">
             <template v-if="loading">
                 <div class="sm:col-span-2 xl:col-span-3 flex items-center justify-center gap-x-2.5">
@@ -244,6 +245,7 @@ onMounted(() => {
             </template>
             
         </section>
+
         <section v-if="!loading || mapels.length > 0" class="my-3.5">
             <PaginationCard :links="links" :name="'Mapel'" @next="handlenextpage" @page="handlepage" @prev="handleprevpage" />
         </section>

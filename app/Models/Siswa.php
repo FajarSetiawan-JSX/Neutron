@@ -22,8 +22,8 @@ class Siswa extends Model
     {
         return $this->hasMany(LogSiswa::class, 'siswa_id');
     }
-    public function logkelas(): HasMany
+    public function rombel(): HasMany
     {
-        return $this->hasMany(LogKelas::class, 'siswa_id');
+        return $this->hasMany(RombelSiswa::class, 'siswa_id');
     }
 }

@@ -11,20 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kelas_siswas', function (Blueprint $table) {
+        Schema::create('rombel_siswas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kelas_id')->constrained(
-                table: 'kelas',
-                indexName: 'kelassiswa_kelas_id'
+            $table->foreignId('rombel_id')->constrained(
+                table: 'rombels',
+                indexName: 'rombel_siswas_rombel_id'
             );
             $table->foreignId('siswa_id')->constrained(
                 table: 'siswas',
-                indexName: 'kelassiswa_siswa_id'
+                indexName: 'rombel_siswas_siswa_id'
             )->cascadeOnDelete();
-            $table->foreignId('tahun_id')->constrained(
-                table: 'tahun_ajarans',
-                indexName: 'kelassiswa_tahun_id'
-            );
             $table->timestamps();
         });
     }
@@ -34,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kelas_siswas');
+        Schema::dropIfExists('rombel_siswas');
     }
 };

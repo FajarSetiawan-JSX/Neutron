@@ -33,10 +33,10 @@ async function create() {
 
 <template>
     <Teleport to="body">
-        <div @click="emit('close')" class="fixed h-screen inset-0 flex justify-center items-center z-[9999] bg-black/50 overflow-y-auto">
+        <div @click="emit('close')" class="fixed h-screen inset-0 flex justify-center items-center z-[9999] bg-black/50 overflow-y-auto px-2">
             <CardBorderAnimation @click.stop data-aos="zoom-in">
                 <form @submit.prevent="create">
-                    <div class="rounded-xl bg-black p-6 w-md">
+                    <div class="rounded-xl bg-black p-6 w-sm lg:w-md">
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-300">
                                 Nama Mapel

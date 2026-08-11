@@ -73,7 +73,7 @@ onBeforeUnmount(() => {
                     <img v-for="(tentor, index) in props?.mapel?.tentors" :key="item"
                         :src="tentor?.avatar ? `/tentor/${tentor.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(tentor?.nama)}&background=DC2626&color=fff`"
                         class="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500 text-xs text-white shadow-lg ring-4 ring-[#1b1f2a]"
-                        :class="`z-${(index)*10}`"
+                        :class="`z-${(index)*1}`"
                         :style="{
                             left: `${index * 52}px`
                         }"
@@ -82,7 +82,7 @@ onBeforeUnmount(() => {
                     />
                 </template>
                 
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500 text-xs text-white shadow-lg ring-4 ring-[#1b1f2a] z-[99]"
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500 text-xs text-white shadow-lg ring-4 ring-[#1b1f2a] z-10"
                     :style="{
                         left: `${props?.mapel?.tentors.length * 52}px`
                     }"

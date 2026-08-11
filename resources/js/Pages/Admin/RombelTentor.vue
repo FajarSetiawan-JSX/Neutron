@@ -8,10 +8,10 @@ const user = usePage().props?.auth?.user;
 </script>
 
 <template>
-    <Head title="Home" />
+    <Head title="Rombel Tentor" />
     <Auth>
         <template #aside>
-            Home
+            Rombel Tentor
         </template>
         <template #header="{ toggleSidebar }">
             <div class="flex items-center gap-4">
@@ -19,11 +19,11 @@ const user = usePage().props?.auth?.user;
                     ☰
                 </button>
                 <h1 class="text-xl font-bold text-white">
-                    Home
+                    Rombel Tentor
                 </h1>
             </div>
-            <div class="flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar v-model="search" />
+            <div class="hidden md:block flex-1 max-w-md mx-8">
+                <AnimatedGlowingSearchBar />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">
@@ -40,6 +40,5 @@ const user = usePage().props?.auth?.user;
                 </div>
             </div>
         </template>
-        
     </Auth>
 </template>

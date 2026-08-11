@@ -4,6 +4,7 @@ use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\KelasController;
 use App\Http\Controllers\api\MapelsController;
 use App\Http\Controllers\api\Profile\UserProfileController;
+use App\Http\Controllers\api\RombelController;
 use App\Http\Controllers\api\SiswaController;
 use App\Http\Controllers\api\TingkatController;
 use App\Http\Controllers\api\TahunAjaranController;
@@ -52,6 +53,11 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('Admin')->group(function ()
     Route::post('/siswa/kelas', [SiswaController::class, 'kelas']);
     Route::post('/siswa/mapel', [SiswaController::class, 'mapel']);
     Route::patch('/siswa/status/{id}', [SiswaController::class, 'status']);
+
+    Route::get('/rombels', [RombelController::class, 'index']);
+    Route::post('/rombel', [RombelController::class, 'store']);
+    Route::patch('/rombel/{id}', [RombelController::class, 'update']);
+    Route::delete('/rombel/{id}', [RombelController::class, 'destroy']);
 
     Route::get('/tingkat', [TingkatController::class, 'index']);
 });

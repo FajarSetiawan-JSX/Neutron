@@ -225,7 +225,7 @@ onMounted(()=>{
             </div>
         </section>
         <section class="my-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5">
-            <div data-aos="zoom-in" class="rounded-lg bg-emerald-500 shadow-lg font-primary overflow-hidden max-h-max">
+            <div data-aos="zoom-in"  data-aos-offset="0" class="rounded-lg bg-emerald-500 shadow-lg font-primary overflow-hidden max-h-max">
                 <div class="ml-1 rounded-lg bg-white w-full flex items-center p-3 gap-x-4">
                     <div class="p-2 rounded-lg bg-emerald-100">
                         <GraduationCap size="40" class="text-emerald-300" />
@@ -236,7 +236,7 @@ onMounted(()=>{
                     </div>
                 </div>
             </div>
-            <div data-aos="zoom-in" data-aos-delay="200" class="rounded-lg bg-red-900 shadow-lg font-primary overflow-hidden max-h-max">
+            <div data-aos="zoom-in" data-aos-delay="200" data-aos-offset="0" class="rounded-lg bg-red-900 shadow-lg font-primary overflow-hidden max-h-max">
                 <div class="ml-1 rounded-lg bg-white w-full flex items-center p-3 gap-x-4">
                     <div class="p-2 rounded-lg bg-red-200">
                         <Speech size="40" class="text-red-400" />
@@ -247,7 +247,7 @@ onMounted(()=>{
                     </div>
                 </div>
             </div>
-            <div data-aos="zoom-in" data-aos-delay="400" class="rounded-lg bg-sky-500 shadow-lg font-primary overflow-hidden max-h-max">
+            <div data-aos="zoom-in" data-aos-delay="400" data-aos-offset="0" class="rounded-lg bg-sky-500 shadow-lg font-primary overflow-hidden max-h-max">
                 <div class="ml-1 rounded-lg bg-white w-full flex items-center p-3 gap-x-4">
                     <div class="p-2 rounded-lg bg-sky-200">
                         <Album size="40" class="text-sky-400" />
@@ -258,7 +258,7 @@ onMounted(()=>{
                     </div>
                 </div>
             </div>
-            <div data-aos="zoom-in" data-aos-delay="600" class="rounded-lg bg-yellow-500 shadow-lg font-primary overflow-hidden max-h-max">
+            <div data-aos="zoom-in" data-aos-delay="600" data-aos-offset="0" class="rounded-lg bg-yellow-500 shadow-lg font-primary overflow-hidden max-h-max">
                 <div class="ml-1 rounded-lg bg-white w-full flex items-center p-3 gap-x-4">
                     <div class="p-2 rounded-lg bg-yellow-200">
                         <School size="40" class="text-yellow-400" />

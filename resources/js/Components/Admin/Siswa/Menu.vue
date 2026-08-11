@@ -1,10 +1,11 @@
 <script setup>
 import CardBorderAnimation from "@/Components/21Dev/CardBorderAnimation.vue";
 import { computed, onMounted, ref, Teleport } from "vue";
-import { Pencil, Trash2, Info, Shapes, BookOpenText, Route, AppWindowMac, NotebookTabs, ChartCandlestick, FingerprintPattern} from "lucide-vue-next";
+import { Pencil, Trash2, Info, Shapes, BookOpenText, Route, AppWindowMac, NotebookTabs, ChartCandlestick, FingerprintPattern, Link} from "lucide-vue-next";
 import Toogle from "@/Components/21Dev/Toogle.vue";
 import { eror,success } from "@/Helper.js/Toast";
 import axios from 'axios';
+import Menu from "@/Components/Menu.vue";
 
 const props = defineProps(['siswa']);
 const emit = defineEmits(['close', 'kelas', 'active', 'mapel', 'hapus', 'update']);
@@ -51,10 +52,10 @@ function kelas(){
                         <Pencil class="h-4 w-4 text-yellow-400" />
                         Edit
                     </button>
-                    <button data-aos="fade-up" data-aos-delay="200" data-aos-offset="0" @click="console.log('hapus kelas')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-emerald-500/10">
+                    <Menu :href="route('admin.siswa.detail', props?.siswa?.nis)" data-aos="fade-up" data-aos-delay="200" data-aos-offset="0" :class="'flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-emerald-500/10'">
                         <Info class="h-4 w-4 text-emerald-400" />
                         Informasi
-                    </button>
+                    </Menu>
                     <button type="button" data-aos="fade-up" data-aos-delay="400" data-aos-offset="0" @click="kelas" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-sky-500/10">
                         <Shapes class="h-4 w-4 text-sky-400" />
                         Kelas

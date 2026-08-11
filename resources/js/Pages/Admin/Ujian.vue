@@ -180,6 +180,7 @@ onMounted(()=>{
                 </div>
             </div>
         </section>
+
         <section class="my-5">
             <div class="flex items-center justify-between p-3 border-1 border-slate-100 bg-white shadow-md">
                 <p class="font-primary text-md font-semibold">Daftar Tipe Ujian</p>
@@ -190,6 +191,7 @@ onMounted(()=>{
                 </select>
             </div>
         </section>
+        
         <section class="my-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-5">
             <template v-if="!loading">
                 <template v-if="ujians.length > 0">

@@ -11,6 +11,10 @@ class TahunAjaran extends Model
 {
     public function logs(): HasMany
     {
-        return $this->hasMany(LogKelas::class, 'tahun_id');
+        return $this->hasMany(KelasSiswa::class, 'tahun_id');
+    }
+    public function rombel(): HasMany
+    {
+        return $this->hasMany(Rombel::class, 'tahun_id');
     }
 }

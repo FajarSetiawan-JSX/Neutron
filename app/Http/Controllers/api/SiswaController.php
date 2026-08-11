@@ -130,10 +130,6 @@ class SiswaController extends Controller
                     'judul' => 'Create Kelas',
                     'history' => 'Mengambil kelas ' . $kelas->nama . ' sebagai base kelas untuk Tahun Ajaran ' . $tahun->tahun . ' pada ' . today()->format('d-m-Y') . '.'
                 ]);
-                $siswa->logkelas()->create([
-                    'tahun_id' => $tahun->id,
-                    'kelas_id' => $valid['kelas']
-                ]);
             }
             Db::commit();
             if (empty($valid['kelas'])) {
@@ -211,27 +207,18 @@ class SiswaController extends Controller
         DB::beginTransaction();
         try {
             $siswa = Siswa::where('id', '=', $id)->first();
-            $kelas = LogKelas::where('siswa_id', '=', $siswa->id)->with('kelas')->latest()->first();
             $siswa->update([
                 'status' => $valid['status']
             ]);
             if ($siswa->status == 0) {
-                if ($kelas) {
-                    $siswa->kelas()->delete();
-                }
                 $siswa->logsiswa()->create([
                     'judul' => 'Update status siswa',
-                    'history' => 'Mengubah status siswa menjadi ' . $siswa->status . ' pada ' . today()->format('d-m-Y') . $kelas ? ' dan telah dikeluarkan dari kelas ' . $kelas->kelas->nama . ' terakhir berdasarkan Log kelas.' : '.'
+                    'history' => 'Mengubah status siswa menjadi ' . $siswa->status . ' pada ' . today()->format('d-m-Y')
                 ]);
             } else {
-                if ($kelas) {
-                    $siswa->kelas()->create([
-                        'kelas_id' => $kelas->kelas_id
-                    ]);
-                }
                 $siswa->logsiswa()->create([
                     'judul' => 'Update status siswa',
-                    'history' => 'Mengubah status siswa menjadi ' . $siswa->status . ' pada ' . today()->format('d-m-Y') . $kelas ? ' dan masuk kembali ke kelas ' . $kelas->kelas->nama . ' terakhir berdasarkan Log kelas.' : '.'
+                    'history' => 'Mengubah status siswa menjadi ' . $siswa->status . ' pada ' . today()->format('d-m-Y')
                 ]);
             }
             Db::commit();

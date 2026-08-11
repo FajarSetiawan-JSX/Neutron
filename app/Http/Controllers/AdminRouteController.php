@@ -30,6 +30,10 @@ class AdminRouteController extends Controller
     {
         return Inertia::render('Admin/Tentor');
     }
+    public function tentorrombel()
+    {
+        return Inertia::render('Admin/RombelTentor');
+    }
     public function mapel()
     {
         $label = [];
@@ -70,16 +74,20 @@ class AdminRouteController extends Controller
         $kelas = Kelas::query()->get();
         $mapel = Mapel::query()->get();
         $TA = TahunAjaran::where('active', '=', 1)->first();
-        $sd = Siswa::whereHas('kelas.kelas.tingkat.jenjang', function($query){
+        $sd = Siswa::whereHas('kelas.kelas.tingkat.jenjang', function ($query) {
             $query->where('slug', '=', 'SD');
         })->count();
-        $smp = Siswa::whereHas('kelas.kelas.tingkat.jenjang', function($query){
+        $smp = Siswa::whereHas('kelas.kelas.tingkat.jenjang', function ($query) {
             $query->where('slug', '=', 'SMP');
         })->count();
-        $sma = Siswa::whereHas('kelas.kelas.tingkat.jenjang', function($query){
+        $sma = Siswa::whereHas('kelas.kelas.tingkat.jenjang', function ($query) {
             $query->where('slug', '=', 'SMA');
         })->count();
         return Inertia::render('Admin/Siswa', ['jenjangs' => $jenjang, 'tingkats' => $tingkat, 'kelases' => $kelas, 'ta' => $TA, 'sd' => $sd, 'smp' => $smp, 'sma' => $sma, 'mapels' => $mapel]);
+    }
+    public function informasi()
+    {
+        return Inertia::render('Admin/DetailSiswa');
     }
     public function presensi()
     {
@@ -108,5 +116,9 @@ class AdminRouteController extends Controller
             $data[] = $item->siswa()->count();
         });
         return Inertia::render('Admin/Kelas', ['tingkat' => $tingkat, 'jenjang' => $jenjang, 'kelas' => $jumlah, 'label' => $label, 'data' => $data]);
+    }
+    public function rombel()
+    {
+        return Inertia::render('Admin/Rombel');
     }
 }
