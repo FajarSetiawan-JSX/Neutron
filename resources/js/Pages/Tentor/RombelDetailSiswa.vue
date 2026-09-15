@@ -25,10 +25,14 @@ function toggleMenu(id) {
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get(`/api/Tentor/rombel/${props?.rombel?.id}`);
+        const response = await axios.get(`/api/Tentor/rombel/${props?.rombel?.id}`, {
+            params: {
+                page: page
+            }
+        });
         console.log(response?.data?.data);
         siswas.value = response?.data?.data ?? []
-        links.value = response?.data?.meta;
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{

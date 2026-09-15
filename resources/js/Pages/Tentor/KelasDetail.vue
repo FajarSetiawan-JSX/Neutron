@@ -23,10 +23,13 @@ const links = ref({});
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get(`/api/Tentor/kelas/${props?.kelas?.id}/siswa/${props?.ta?.id}`);
+        const response = await axios.get(`/api/Tentor/kelas/${props?.kelas?.id}/siswa/${props?.ta?.id}`, {
+            params: {
+                page: page
+            }
+        });
         siswas.value = response?.data?.data ?? [];
         links.value = response?.data?.meta ?? {};
-        console.log(response.data);
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{

@@ -20,8 +20,7 @@ async function create() {
         loading.value = true;
         const response = await axios.post(`/api/Tentor/${props?.rombel?.id}/pertemuan`, form.value);
         success('Berhasil membuat Pertemuan Baru 🫡');
-        emit('success', response?.data?.data)
-        //console.log(response?.data.);
+        emit('success', response?.data?.data);
     }catch(error){
         if(error?.response?.status === 422){
             err.value = error?.response?.data?.errors
@@ -38,7 +37,7 @@ async function create() {
         <div @click="emit('close')" class="fixed h-screen inset-0 flex justify-center items-center z-[9999] bg-black/50 overflow-y-auto">
             <CardBorderAnimation @click.stop data-aos="zoom-in">
                 <form @submit.prevent="create">
-                    <div class="rounded-xl bg-black p-6 w-md">
+                    <div class="rounded-xl bg-black p-6 w-sm md:w-md">
                         <div class="mb-5">
                             <div class="flex items-center justify-center font-primary text-lg text-white gap-x-1.5 mb-1">
                                 <Presentation size="20" />

@@ -18,10 +18,13 @@ const links = ref({});
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get('/api/Tentor/rombel');
-        console.log(response?.data?.data);
+        const response = await axios.get('/api/Tentor/rombel', {
+            params: {
+                page: page
+            }
+        });
         rombels.value = response?.data?.data ?? []
-        links.value = response?.data?.meta;
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{
@@ -63,7 +66,7 @@ onMounted(()=>{
                     Rombel
                 </h1>
             </div>
-            <div class="flex-1 max-w-md mx-8">
+            <div class="flex-1 max-w-md mx-8 hidden md:block">
                 <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>

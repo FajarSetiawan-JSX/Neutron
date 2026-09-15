@@ -17,6 +17,7 @@ import LoadingImage from '@/Components/Profile/LoadingImage.vue';
 import { eror,success } from '@/Helper.js/Toast.js';
 
 const user = usePage().props?.auth?.user;
+const props = defineProps(['user']);
 const form = ref({
     id: '',
     name: '',
@@ -43,19 +44,11 @@ async function update() {
         loading.value = false;
     }
 }
-defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
 onMounted(()=>{
-    form.value.id = user?.id;
-    form.value.name = user?.name;
-    form.value.email = user?.email;
-    form.value.phone = user?.phone;
+    form.value.id = props?.user?.id;
+    form.value.name = props?.user?.name;
+    form.value.email = props?.user?.email;
+    form.value.phone = props?.user?.phone;
 })
 
 const fileInput = ref(null);
@@ -227,30 +220,5 @@ async function image() {
             </div>
         </section>
         <LoadingImage v-if="uploading" />
-        <!-- <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div
-                    class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8"
-                >
-                    <UpdateProfileInformationForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
-                    />
-                </div>
-
-                <div
-                    class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8"
-                >
-                    <UpdatePasswordForm class="max-w-xl" />
-                </div>
-
-                <div
-                    class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8"
-                >
-                    <DeleteUserForm class="max-w-xl" />
-                </div>
-            </div>
-        </div> -->
     </Auth>
 </template>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Tentor\GetPertemuanResource;
 use App\Http\Resources\Tentor\GetPertemuansResource;
 use App\Models\Pertemuan;
 use App\Models\Rombel;
@@ -54,8 +55,9 @@ class PertemuanController extends Controller
                 'pertemuan' => $ke,
                 'materi' => $valid['materi']
             ]);
+            $data->load(['tipe', 'absensi', 'rombel.siswa']);
             DB::commit();
-            return response()->json(['data' => $data]);
+            return new GetPertemuanResource($data);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error([

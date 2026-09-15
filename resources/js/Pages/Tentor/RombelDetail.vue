@@ -27,9 +27,13 @@ const links = ref({});
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get(`/api/Tentor/${props?.rombel?.id}/pertemuans`);
+        const response = await axios.get(`/api/Tentor/${props?.rombel?.id}/pertemuans`, {
+            params: {
+                page: page
+            }
+        });
         pertemuans.value = response?.data?.data ?? [];
-        links.value = response?.data?.meta;
+        links.value = response?.data?.meta ?? {}
         pertemuans.value = pertemuans.value.map((item)=>({
             ...item,
             saved: localStorage.getItem(item.id) ? true : false

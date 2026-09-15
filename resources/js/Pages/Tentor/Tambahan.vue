@@ -12,8 +12,6 @@ import Menu from '@/Components/Menu.vue';
 
 const user = usePage().props?.auth?.user;
 const props = defineProps(['rombel', 'siswas']);
-const closebutton = ref(false);
-const siswaaktif = ref([]);
 const loading = ref(false);
 const err = ref({});
 const form = ref({

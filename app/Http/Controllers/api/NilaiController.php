@@ -55,14 +55,14 @@ class NilaiController extends Controller
     public function store(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'tipe' => 'required|exists:ujians,id',
+            'ujian' => 'required|exists:ujians,id',
             'pertemuan' => 'required|exists:pertemuans,id',
             'data' => 'required|array|min:1',
             'data.*.id' => 'required|exists:rombel_siswas,id',
             'data.*.nilai' => 'required|numeric|min:0|max:100',
             'data.*.note' => 'nullable|max:100'
         ], [
-            'required' => ':attribute required',
+            'required' => ':attribute wajib diisi',
             'exists' => ':attribute does not exist',
             'array' => 'only array allowed',
             'numeric' => 'nilai harus berupa angka',
@@ -83,7 +83,7 @@ class NilaiController extends Controller
                     continue;
                 }
                 $item->nilai()->create([
-                    'ujian_id' => $valid['tipe'],
+                    'ujian_id' => $valid['ujian'],
                     'nilai' => $siswa['nilai'],
                     'catatan' => $siswa['note']
                 ]);

@@ -17,10 +17,13 @@ const links = ref({});
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get(`/api/Tentor/kelases/${user?.id}`);
-        kelases.value = response?.data?.data;
-        links.value = response?.data?.meta;
-        console.log(response.data);
+        const response = await axios.get(`/api/Tentor/kelases/${user?.id}`, {
+            params: {
+                page: page
+            }
+        });
+        kelases.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{
@@ -62,10 +65,7 @@ onMounted(()=>{
                     Kelas
                 </h1>
             </div>
-            <div class="flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar v-model="search" />
-                <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
-            </div>
+            
             <div class="flex items-center gap-3">
                 <button class="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-500 hover:text-white transition">
                     🔔

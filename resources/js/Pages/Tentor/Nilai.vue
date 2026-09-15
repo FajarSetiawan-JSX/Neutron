@@ -17,7 +17,7 @@ const record = ref({});
 const loading = ref(false);
 const done = ref(false);
 const form = ref({
-    tipe: '',
+    ujian: '',
     pertemuan: '',
     data: [] 
 });
@@ -191,7 +191,7 @@ onMounted(()=>{
                                 <h3 class="text-md font-semibold text-slate-500 font-primary">
                                     Total Siswa <span class="text-slate-700"> {{ form?.data?.length }}</span>
                                 </h3>
-                                <select name="" id="" v-model="form.tipe" class="rounded-lg border-0 ring-2 ring-slate-300 focus:ring-sky-500">
+                                <select name="" id="" v-model="form.ujian" class="rounded-lg border-0 ring-2 ring-slate-300 focus:ring-sky-500">
                                     <option value="" disabled selected>Pilih Ujian</option>
                                     <option v-for="tipe in props?.types" :key="tipe.id" :value="tipe.id">{{ tipe?.nama }}</option>
                                 </select>

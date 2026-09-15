@@ -209,10 +209,7 @@ onMounted(()=>{
                     Home
                 </h1>
             </div>
-            <div class="flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar v-model="search" />
-                <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
-            </div>
+            
             <div class="flex items-center gap-3">
                 <button class="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-500 hover:text-white transition">
                     🔔
@@ -235,7 +232,7 @@ onMounted(()=>{
                         <p class="text-sm text-slate-500">Pantau jadwal, kelas, dan aktivitas mengajarmu dengan mudah.</p>
                         <p class="mt-5 text-md text-white px-3 py-1 rounded-full bg-black max-w-max flex items-center justify-start gap-x-1">Tahun Ajaran {{ props?.ta?.tahun }} <CircleCheckBig class="text-red-500" /> </p>
                     </div>
-                    <div class="flex items-center justify-between gap-x-2 w-sm">
+                    <div class="flex items-center justify-between flex-wrap gap-x-2 max-w-sm">
                         <div>
                             <h2 class="font-semibold text-2xl text-red-500 text-center">{{ totalsiswakelas.count }}</h2>
                             <p class="text-slate-500 text-xs">siswa wali</p>
