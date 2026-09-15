@@ -50,7 +50,7 @@ class AbsensiController extends Controller
                     'rombel_siswa_id' => $siswa,
                 ]);
             }
-            Db::commit();
+            DB::commit();
             return response()->json(['data' => $valid['hadir']]);
         } catch (Exception $e) {
             DB::rollBack();
@@ -97,7 +97,7 @@ class AbsensiController extends Controller
                     'rombel_siswa_id' => $siswa
                 ]);
             }
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil absen tambahan']);
         } catch (Exception $e) {
             DB::rollBack();
@@ -143,7 +143,7 @@ class AbsensiController extends Controller
             Absensi::whereHas('pertemuan.rombel.tahun', function ($query) use ($ta) {
                 $query->where('id', '=', $ta);
             })->delete();
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil menghapus absensi']);
         } catch (Exception $e) {
             DB::rollBack();

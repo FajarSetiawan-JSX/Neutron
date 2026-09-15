@@ -40,20 +40,20 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'slug' => Str::slug('Admin'),
             'role_id' => 1,
-            'email' => 'admin@example.com',
+            'email' => 'admin@neutronskj.com',
             'phone' => encrypt($hp1),
             'phone_hash' => hash('sha256', $hp1),
             'password' => Hash::make('password'),
         ]);
-        User::factory()->create([
-            'name' => 'Pengajar',
-            'slug' => Str::slug('Pengajar S.Pd.,'),
-            'role_id' => 2,
-            'email' => 'pengajar@example.com',
-            'phone' => encrypt($hp2),
-            'phone_hash' => hash('sha256', $hp2),
-            'password' => Hash::make('password'),
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Pengajar',
+        //     'slug' => Str::slug('Pengajar S.Pd.,'),
+        //     'role_id' => 2,
+        //     'email' => 'pengajar@example.com',
+        //     'phone' => encrypt($hp2),
+        //     'phone_hash' => hash('sha256', $hp2),
+        //     'password' => Hash::make('password'),
+        // ]);
         //Tipe ujian
         $evaluasi = Ujian::create([
             'nama' => 'Evaluasi',

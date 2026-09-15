@@ -70,7 +70,7 @@ class AlumniController extends Controller
                     'history' => 'Lulus dari tingkat 12 pada tahun ajaran ' . $ta->tahun
                 ]);
             }
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil meluluskan siswa tingkat 12']);
         } catch (Exception $e) {
             DB::rollBack();

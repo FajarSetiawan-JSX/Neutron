@@ -24,7 +24,7 @@ const err = ref({});
 async function create() {
     try{
         loading.value = true;
-        const response = await axios.post('/api/Admin/rombel/checkout/', form.value);
+        const response = await axios.post('/api/Admin/rombel/checkout', form.value);
         success('Berhasil menambahkan rombel 🫡');
         emit('success')
     }catch(error){

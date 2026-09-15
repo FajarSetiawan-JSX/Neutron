@@ -88,7 +88,7 @@ class RombelController extends Controller
                 'slug' => Str::slug($valid['nama']),
                 'deskripsi' => $valid['deskripsi']
             ]);
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil membuat rombel baru']);
         } catch (Exception $e) {
             DB::rollBack();
@@ -126,7 +126,7 @@ class RombelController extends Controller
                     'history' => 'Menambah rombel dengan id ' . $rombel . ' Untuk Tahun Ajaran ' . $tahun->tahun
                 ]);
             }
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil menambah rombel']);
         } catch (Exception $e) {
             DB::rollBack();
@@ -174,7 +174,7 @@ class RombelController extends Controller
                 'slug' => Str::slug($valid['nama']),
                 'deskripsi' => $valid['deskripsi']
             ]);
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil memperbarui rombel']);
         } catch (Exception $e) {
             DB::rollBack();

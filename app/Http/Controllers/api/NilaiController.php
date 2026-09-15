@@ -92,7 +92,7 @@ class NilaiController extends Controller
             $pertemuan->update([
                 'selesai' => 1
             ]);
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil memasukan nilai']);
         } catch (Exception $e) {
             DB::rollBack();

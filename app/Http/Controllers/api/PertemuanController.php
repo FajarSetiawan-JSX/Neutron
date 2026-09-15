@@ -54,7 +54,7 @@ class PertemuanController extends Controller
                 'pertemuan' => $ke,
                 'materi' => $valid['materi']
             ]);
-            Db::commit();
+            DB::commit();
             return response()->json(['data' => $data]);
         } catch (Exception $e) {
             DB::rollBack();
@@ -89,7 +89,7 @@ class PertemuanController extends Controller
             $pertemuan->update([
                 'selesai' => 1
             ]);
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Success done pertemuan']);
         } catch (Exception $e) {
             DB::rollBack();

@@ -113,7 +113,7 @@ class SiswaController extends Controller
         try {
             $data = RombelSiswa::where('rombel_id', '=', $rombels->id)->where('siswa_id', '=', $siswa->id)->first();
             $data->delete();
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil menghapus rombel siswa']);
         } catch (Exception $e) {
             DB::rollBack();
@@ -185,7 +185,7 @@ class SiswaController extends Controller
                 'judul' => 'Create data siswa',
                 'history' => 'Terdaftar sebagai siswa pada ' . today()->format('d-m-Y') . '.'
             ]);
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil menambah siswa baru.']);
         } catch (Exception $e) {
             DB::rollBack();
@@ -244,7 +244,7 @@ class SiswaController extends Controller
                     'history' => 'Mengambil kelas ' . $kelas->nama . ' sebagai base kelas untuk Tahun Ajaran ' . $tahun->tahun . ' pada ' . today()->format('d-m-Y') . '.'
                 ]);
             }
-            Db::commit();
+            DB::commit();
             if (empty($valid['kelas'])) {
                 return response()->json(['message' => 'Berhasil mengeluarkan siswa dari kelas']);
             } else {
@@ -334,7 +334,7 @@ class SiswaController extends Controller
                     'history' => 'Mengubah status siswa menjadi ' . $siswa->status . ' pada ' . today()->format('d-m-Y')
                 ]);
             }
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil mengubah status']);
         } catch (Exception $e) {
             DB::rollBack();
@@ -394,7 +394,7 @@ class SiswaController extends Controller
                 'judul' => 'Update data siswa',
                 'history' => 'Data siswa diperbarui pada ' . today()->format('d-m-Y') . '.'
             ]);
-            Db::commit();
+            DB::commit();
             return response()->json(['message' => 'Berhasil update data siswa.']);
         } catch (Exception $e) {
             DB::rollBack();

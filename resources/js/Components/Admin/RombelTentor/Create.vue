@@ -22,7 +22,7 @@ const err = ref({});
 async function create() {
     try{
         loading.value = true;
-        const response = await axios.post('/api/Admin/rombel/', form.value);
+        const response = await axios.post('/api/Admin/rombel', form.value);
         success('Berhasil membuat rombel baru 🫡');
         emit('success')
     }catch(error){
