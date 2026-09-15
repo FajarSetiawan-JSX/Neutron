@@ -16,9 +16,14 @@ return new class extends Migration
             $table->foreignId('rombel_id')->constrained(
                 table: 'rombels',
                 indexName: 'pertemuan_rombel_id'
-            );
+            )->cascadeOnDelete();
+            $table->foreignId('tipe_id')->constrained(
+                table: 'tipes',
+                indexName: 'pertemuan_tipe_id'
+            )->cascadeOnDelete();
             $table->integer('pertemuan');
             $table->string('materi');
+            $table->boolean('selesai')->default(false);
             $table->timestamps();
         });
     }

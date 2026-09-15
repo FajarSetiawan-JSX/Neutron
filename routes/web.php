@@ -13,13 +13,14 @@ Route::get('/', [RoutingController::class, 'welcome'])->name('welcome');
 Route::middleware(['auth', 'verified', 'admin'])->prefix('Admin')->group(function () {
     Route::get('/home', [AdminRouteController::class, 'home'])->name('admin.home');
     Route::get('/siswa', [AdminRouteController::class, 'siswa'])->name('admin.siswa');
-    Route::get('/siswa/{nis}', [AdminRouteController::class, 'informasi'])->name('admin.siswa.detail');
+    Route::get('/alumni', [AdminRouteController::class, 'alumni'])->name('admin.alumni');
     Route::get('/presensi', [AdminRouteController::class, 'presensi'])->name('admin.presensi');
     Route::get('/nilai', [AdminRouteController::class, 'nilai'])->name('admin.nilai');
+    Route::get('/sistem', [AdminRouteController::class, 'sistem'])->name('sistem');
 
     //master data
     Route::get('/tentor', [AdminRouteController::class, 'tentor'])->name('admin.tentor');
-    Route::get('/tentor/{id}', [AdminRouteController::class, 'tentorrombel'])->name('admin.tentor.rombel');
+
     Route::get('/mapel', [AdminRouteController::class, 'mapel'])->name('admin.mapel');
     Route::get('/tahun', [AdminRouteController::class, 'tahun'])->name('admin.tahun');
     Route::get('/ujian', [AdminRouteController::class, 'ujian'])->name('admin.ujian');
@@ -27,14 +28,28 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('Admin')->group(functio
     Route::get('/tingkat', [AdminRouteController::class, 'tingkat'])->name('admin.tingkat');
     Route::get('/kelas', [AdminRouteController::class, 'kelas'])->name('admin.kelas');
     Route::get('/rombel', [AdminRouteController::class, 'rombel'])->name('admin.rombel');
-    Route::get('/naikkelas', [AdminRouteController::class, 'naik'])->name('admin.kelas.naik');
+    Route::get('/kelulusan', [AdminRouteController::class, 'kelulusan'])->name('admin.kelulusan');
+    Route::get('/rombel/{id}', [AdminRouteController::class, 'tentorrombelsiswa'])->name('admin.rombel.siswa');
+
+    Route::get('/kelas/{slug}', [AdminRouteController::class, 'kelasDetail'])->name('admin.kelas.detail');
+    Route::get('/siswa/{nis}', [AdminRouteController::class, 'informasi'])->name('admin.siswa.detail');
+    Route::get('/tentor/{slug}', [AdminRouteController::class, 'tentorrombel'])->name('admin.tentor.rombel');
+    Route::get('/siswa/rombel/{nis}', [AdminRouteController::class, 'rombelsiswa'])->name('admin.siswa.rombel');
 });
 
 
 Route::middleware(['auth', 'verified', 'tentor'])->prefix('Tentor')->group(function () {
     Route::get('/home', [TentorRouteController::class, 'home'])->name('tentor.home');
-    Route::get('/siswa', [TentorRouteController::class, 'home'])->name('tentor.home');
-    Route::get('/rombel', [TentorRouteController::class, 'home'])->name('tentor.home');
+    Route::get('/kelas', [TentorRouteController::class, 'kelas'])->name('tentor.kelas');
+    Route::get('/rombel', [TentorRouteController::class, 'rombel'])->name('tentor.rombel');
+    Route::get('/rombel/{id}', [TentorRouteController::class, 'rombeldetail'])->name('tentor.rombel.detail');
+
+    Route::get('/kelas/{id}', [TentorRouteController::class, 'kelasdetail'])->name('tentor.kelas.detail');
+    Route::get('/pertemuan/{id}/absen', [TentorRouteController::class, 'absen'])->name('tentor.absen');
+    Route::get('/pertemuan/{id}/nilai', [TentorRouteController::class, 'nilai'])->name('tentor.nilai');
+    Route::get('/pertemuan/{id}/detail', [TentorRouteController::class, 'detailpertemuan'])->name('tentor.pertemuan.detail');
+    Route::get('/rombel/{id}/tambahan', [TentorRouteController::class, 'tambahan'])->name('tentor.rombel.tambahan');
+    Route::get('/rombel/{id}/siswa', [TentorRouteController::class, 'rombeldetailsiswa'])->name('tentor.rombel.detail.siswa');
 });
 
 Route::middleware('auth')->group(function () {

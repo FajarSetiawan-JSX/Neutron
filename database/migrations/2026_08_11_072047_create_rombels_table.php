@@ -27,6 +27,7 @@ return new class extends Migration
                 table: 'tahun_ajarans',
                 indexName: 'tahuns_rombel_id'
             );
+            $table->string('deskripsi', 200)->nullable();
             $table->timestamps();
         });
     }

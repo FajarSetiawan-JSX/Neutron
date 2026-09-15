@@ -111,6 +111,7 @@ function handleprev(value){
     }
 }
 function handlesucces(){
+    modalcreate.value = false
     get()
 }
 function handleupdate(data){
@@ -123,6 +124,10 @@ function handlesuccesupdate(){
     thn.value = {};
     modalupdate.value = false;
     get();
+}
+function handlecloseupdate(){
+    thn.value = {};
+    modalupdate.value = false;
 }
 onMounted(()=>{
     get()
@@ -230,7 +235,8 @@ onMounted(()=>{
                 </div>
             </div>
         </section>
+        
         <Create v-if="modalcreate" @close="modalcreate = false" @success="handlesucces" />
-        <Update v-if="modalupdate" @close="modalupdate = false" @success="handlesuccesupdate" :data="thn" />
+        <Update v-if="modalupdate" @close="handlecloseupdate" @success="handlesuccesupdate" :data="thn" />
     </Auth>
 </template>

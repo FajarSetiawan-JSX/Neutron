@@ -13,6 +13,9 @@ import Card from '@/Components/Admin/Rombel/Card.vue';
 import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
 import axios from 'axios';
 import { eror, success } from '@/Helper.js/Toast';
+import TerminalLoading from '@/Components/21Dev/TerminalLoading.vue';
+import BoxLoading3D from '@/Components/21Dev/BoxLoading3D.vue';
+import PaginationCard from '@/Components/PaginationCard.vue';
 const colors = [
     "#ef4444", // merah
     "#3b82f6", // biru
@@ -71,21 +74,40 @@ const options = {
 };
 ChartJS.register( CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 const user = usePage().props?.auth?.user;
-const modalcreate = ref(false);
 const rombels = ref([]);
+const links = ref({});
 const loading = ref(false);
 
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get('/api/Admin/');
+        const response = await axios.get('/api/Admin/rombels');
+        rombels.value = response?.data?.data ?? []
+        links.value = response?.data?.meta;
+        console.log(response.data);
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{
         loading.value = false;
     }
 }
+function handleprevpage(page){
+    if(page){
+        get(page);
+    }
+}
+function handlenextpage(page){
+    if(page){
+        get(page);
+    }
+}
+function handlepage(page){
+    if(page){
+        get(page);
+    }
+}
 onMounted(()=>{
+    get()
     setTimeout(() => {
         data.value = {
             ...data.value,
@@ -429,29 +451,21 @@ onMounted(()=>{
             </div>
         </section>
 
-        <section class="my-5">
-            <div class="md:flex md:items-center md:justify-between grid grid-cols-1 gap-2.5 p-3 border-1 border-slate-100 bg-white shadow-md">
-                <div>
-                    <Search v-model="search" placeholder="Cari siswa..." />
+        <section v-if="!loading" class="my-5">
+            <template v-if="rombels.length > 0">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    <Card v-for="rombel in rombels" :key="rombel?.id" :rombel="rombel" />
                 </div>
-                <div class="flex items-center justify-end gap-x-3">
-                    <select name="" id="" class="rounded-lg">
-                        <option selected disabled value="">Filter TA</option>
-                        <option value="">2026 / 2027</option>
-                    </select>
-                    <GradientButton color="red" type="button" @click="modalcreate = true" class="flex items-center justify-center gap-2 font-primary py-3 px-6 text-white rounded-xl">
-                        <Plus class="w-5 h-5"/> Tambah Rombel
-                    </GradientButton>
-                </div>
-            </div>
+            </template>
+            <template v-else>
+                <h1 class="my-10 font-anonymous text-center text-red-500 text-xl">0 Data rombel</h1>
+            </template>
+            <PaginationCard :links="links" :name="'Rombel'" @next="handlenextpage" @page="handlepage" @prev="handleprevpage" class="mt-5" />
         </section>
-        <section class="my-5">
-            <Card />
-        </section>
-        <section class="my-5 flex items-center justify-center h-60">
-            <div>
-                <PrimaryLoading size="50" :class="'stroke-emerald-500'" />
-                <p class="font-anonymous text-md text-center my-5">Fetching data</p>
+
+        <section v-else class="my-5">
+            <div class="w-full my-5 flex items-center justify-center overflow-hidden">
+                <BoxLoading3D />
             </div>
         </section>
 

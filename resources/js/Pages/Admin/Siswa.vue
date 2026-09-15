@@ -32,7 +32,6 @@ const colors = [
     "#f97316", // orange
     "#84cc16", // lime
 ];
-const targetData = [302, 250, 370, 410, 227, 302, 250, 370, 410, 227, 330, 270];
 const backgroundColor = Array.from({ length: 12 }, () => {
     return colors[Math.floor(Math.random() * colors.length)];
 });
@@ -40,7 +39,7 @@ const data = ref({
     labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"],
     datasets: [
         {
-            data: [0, 0, 0, 0, 0],
+            data: [],
             label: 'Siswa',
             backgroundColor: backgroundColor,
             borderRadius: 8,
@@ -77,7 +76,7 @@ const options = {
     },
 };
 ChartJS.register( CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-const props = defineProps(['tingkats', 'jenjangs', 'kelases', 'ta', 'sd', 'smp', 'sma', 'mapels']);
+const props = defineProps(['tingkats', 'jenjangs', 'kelases', 'ta', 'sd', 'smp', 'sma', 'mapels', 'data', 'tahun']);
 const user = usePage().props?.auth?.user;
 const modalmenu = ref(false);
 const modalcreate = ref(false);
@@ -207,7 +206,7 @@ onMounted(()=>{
             datasets: [
                 {
                     ...data.value.datasets[0],
-                    data: targetData,
+                    data: props?.data,
                 },
             ],
         };
@@ -279,7 +278,7 @@ watch(()=>kelas.value, (newkelas)=>{
 
         <section class="grid grid-cols-1 gap-3">
             <div class="p-3 rounded-lg shadow-lg">
-                <h1 class="text-2xl font-primary text-center mb-2 font-semibold">Grafik kenaikan siswa baru tahun 2026</h1>
+                <h1 class="text-2xl font-primary text-center mb-2 font-semibold">Grafik kenaikan siswa baru tahun {{ props?.tahun }}</h1>
                 <Bar :data="data" :options="options" class="max-h-80" />
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -404,7 +403,7 @@ watch(()=>kelas.value, (newkelas)=>{
 
                                         <template v-if="siswa?.kelas">
                                             <td  class="px-6 py-4 text-center">
-                                                {{ siswa.kelas }}
+                                                {{ siswa?.kelas }}
                                             </td>
                                         </template>
                                         <template v-else>
@@ -415,10 +414,19 @@ watch(()=>kelas.value, (newkelas)=>{
                                             </td>
                                         </template>
                                         
-                                        
-                                        <td class="px-6 py-4 flex justify-center items-center">
-                                            <OctagonAlert size="20" class="text-red-500" />
-                                        </td>
+                                        <template v-if="siswa?.rombel > 0">
+                                            <td  class="px-6 py-4 text-center">
+                                                {{ siswa?.rombel }}
+                                            </td>
+                                        </template>
+                                        <template v-else>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center justify-center">
+                                                    <OctagonAlert size="20" class="text-red-500" />
+                                                </div>
+                                            </td>
+                                        </template>
+
                                         <td class="px-6 py-4 text-center">
                                             <span :class="siswa.status == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-500'" class="rounded-full  px-3 py-1 text-xs font-semibold">
                                                 {{ siswa.status == 1 ? 'Aktif' : 'Non aktif' }}
@@ -450,6 +458,7 @@ watch(()=>kelas.value, (newkelas)=>{
             </div>
             <PaginationCard :links="links" :name="'Siswa'" @next="handlenextpage" @page="handlepage" @prev="handleprevpage" />
         </section>
+        
         <Menu v-if="modalmenu" :siswa="siswa" @close="closemenu" @active="toggleactive" @kelas="openclass" @mapel="openmapel" @hapus="openhapus" @update="openupdate" />
         <Create v-if="modalcreate" @close="modalcreate = false" @success="successcreate" />
         <Update v-if="modalupdate" :siswa="siswa" @close="closeupdate" @success="succesupdate" />

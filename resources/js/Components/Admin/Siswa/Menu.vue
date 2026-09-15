@@ -1,7 +1,7 @@
 <script setup>
 import CardBorderAnimation from "@/Components/21Dev/CardBorderAnimation.vue";
 import { computed, onMounted, ref, Teleport } from "vue";
-import { Pencil, Trash2, Info, Shapes, BookOpenText, Route, AppWindowMac, NotebookTabs, ChartCandlestick, FingerprintPattern, Link} from "lucide-vue-next";
+import { Pencil, Trash2, Info, Shapes, BookOpenText, MessageCircleMore, AppWindowMac, MessagesSquare, ChartCandlestick, FingerprintPattern, Link, CirclePile} from "lucide-vue-next";
 import Toogle from "@/Components/21Dev/Toogle.vue";
 import { eror,success } from "@/Helper.js/Toast";
 import axios from 'axios';
@@ -64,23 +64,19 @@ function kelas(){
                         <BookOpenText class="h-4 w-4 text-purple-400" />
                         Mapel
                     </button>
-                    <button data-aos="fade-up" data-aos-delay="800" data-aos-offset="0" @click="console.log('hapus kelas')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-cyan-500/10">
-                        <Route class="h-4 w-4 text-cyan-400" />
-                        Journey
-                    </button>
-                    <button data-aos="fade-up" data-aos-delay="1000" data-aos-offset="0" @click="console.log('hapus kelas')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-amber-500/10">
-                        <NotebookTabs class="h-4 w-4 text-amber-400" />
-                        Rapot
-                    </button>
-                    <button data-aos="fade-up" data-aos-delay="1200" data-aos-offset="0" @click="console.log('hapus kelas')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-indigo-500/10">
-                        <ChartCandlestick class="h-4 w-4 text-indigo-400" />
-                        Nilai
-                    </button>
-                    <button data-aos="fade-up" data-aos-delay="1400" data-aos-offset="0" @click="console.log('hapus kelas')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-violet-500/10">
-                        <FingerprintPattern class="h-4 w-4 text-violet-400" />
-                        Absensi
-                    </button>
-                    <button data-aos="fade-up" data-aos-delay="1600" data-aos-offset="0" @click="emit('hapus')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition hover:bg-red-500/10">
+                    <Menu :href="route('admin.siswa.rombel', props?.siswa?.nis)" data-aos="fade-up" data-aos-delay="800" data-aos-offset="0" @click="console.log('hapus kelas')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-cyan-500/10">
+                        <CirclePile class="h-4 w-4 text-cyan-400" />
+                        Rombel
+                    </Menu>
+                    <a :href="`https://wa.me/${siswa.phone}`" target="_blank" data-aos="fade-up" data-aos-delay="1000" data-aos-offset="0" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-teal-500/10">
+                        <MessagesSquare class="h-4 w-4 text-teal-400" />
+                        Chat {{ siswa?.nama }}
+                    </a>
+                    <a :href="`https://wa.me/${siswa.phone_ortu}`" target="_blank" data-aos="fade-up" data-aos-delay="1200" data-aos-offset="0" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-amber-500/10">
+                        <MessageCircleMore class="h-4 w-4 text-amber-400" />
+                        Chat Orang Tua
+                    </a>
+                    <button data-aos="fade-up" data-aos-delay="1400" data-aos-offset="0" @click="emit('hapus')" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition hover:bg-red-500/10">
                         <Trash2 class="h-4 w-4" />
                         Hapus
                     </button>

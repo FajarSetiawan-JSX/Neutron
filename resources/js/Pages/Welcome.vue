@@ -100,7 +100,7 @@ onMounted(()=>{
                 </div>
             </div>
             <div class="w-full hidden lg:block">
-                <div class="flex md:justify-end justify-center">
+                <div class="flex justify-center">
                     <GrowingShadow :image="'/assets/neutron.png'" />
                     <!-- <Card variant="backdrop-blur-sm p-4">
                         <img src="/assets/neutron.png" alt="Logo" class="w-48 md:w-72">

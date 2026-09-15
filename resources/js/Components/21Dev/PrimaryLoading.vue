@@ -16,11 +16,12 @@ const props = defineProps({
         role="status"
         aria-live="polite"
         :class="[
-            'flex items-center justify-center',
+            'flex items-center justify-center overflow-hidden',
             props.class
         ]"
     >
         <svg
+            class="block"
             :width="size"
             :height="size"
             viewBox="-2 -2 44 44"

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['subjek_id', 'tahun_id', 'tingkat_id', 'nama', 'slug'])]
+#[Fillable(['subjek_id', 'tahun_id', 'tingkat_id', 'name', 'slug', 'deskripsi'])]
 class Rombel extends Model
 {
     public function tahun(): BelongsTo

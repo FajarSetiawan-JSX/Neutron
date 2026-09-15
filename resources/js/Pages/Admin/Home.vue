@@ -10,7 +10,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, RadialLinearS
 import { onMounted, ref } from 'vue';
 
 const user = usePage().props?.auth?.user;
-const props = defineProps(['tahun', 'siswa', 'tentor', 'mapel', 'kelas']);
+const props = defineProps(['tahun', 'siswa', 'tentor', 'mapel', 'kelas', 'labelmapel', 'datamapel', 'labelkelas', 'datakelas']);
 const colors = [
     "#ef4444", // merah
     "#3b82f6", // biru
@@ -23,18 +23,15 @@ const colors = [
     "#f97316", // orange
     "#84cc16", // lime
 ];
-const jumlahpeminat = [302, 250, 370, 410, 227];
-const listmapel = ['Bahasa Indonesia', 'Fisika', 'Matematika', 'Kimia', 'Biologi'];
-const jumlahsiswa = [40, 33, 39, 35, 41];
-const listkelas = ['1 SMA 1', '2 SMA 2', '1 SMA 2', '3 SMA 1', '3 SMA 2'];
+
 const backgroundColor = Array.from({ length: 12 }, () => {
     return colors[Math.floor(Math.random() * colors.length)];
 });
 const datamapel = ref({
-    labels: ["", "", "", "", ""],
+    labels: props?.labelmapel,
     datasets: [
         {
-            data: [0, 0, 0, 0, 0],
+            data: [],
             label: ["Jumlah siswa"],
             backgroundColor: backgroundColor,
             borderRadius: 0,
@@ -42,11 +39,11 @@ const datamapel = ref({
     ],
 });
 const datakelas = ref({
-    labels: ["","","","",""],
+    labels: props?.labelkelas,
     datasets: [
         {
             label: 'Total siswa',
-            data: [0, 0, 0, 0, 0],
+            data: [0],
             backgroundColor: [
                 "#ef4444",
                 "#3b82f6",
@@ -131,23 +128,22 @@ const optionsKelas = {
 ChartJS.register( CategoryScale, LinearScale, BarElement,RadialLinearScale, ArcElement, Tooltip, Legend);
 
 onMounted(()=>{
-    //get()
     setTimeout(() => {
         datamapel.value = {
-            labels: listmapel,
+            ...datamapel.value,
             datasets: [
                 {
                     ...datamapel.value.datasets[0],
-                    data: jumlahpeminat,
+                    data: props?.datamapel,
                 },
             ],
         };
         datakelas.value = {
-            labels: listkelas,
+            ...datakelas.value,
             datasets: [
                 {
                     ...datakelas.value.datasets[0],
-                    data: jumlahsiswa
+                    data: props?.datakelas
                 }
             ]
         }

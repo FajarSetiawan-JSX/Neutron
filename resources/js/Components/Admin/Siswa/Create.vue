@@ -13,6 +13,7 @@ const form = ref({
     nama: '',
     nis: '',
     phone: '',
+    phoneOrtu: '',
     sekolah: '',
     alamat: ''
 })
@@ -78,15 +79,27 @@ async function create() {
                         </div>
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-300">
-                                Nomor Telp orang tua (WhatsApp)
+                                Nomor Telp (WhatsApp)
                             </label>
 
                             <input v-model="form.phone"
                                 type="text"
-                                placeholder="Contoh: 08xxxxxxxxx"
+                                placeholder="Contoh: 628123xxxxxx"
                                 class="w-full rounded-lg border border-white/10 bg-[#1d1d1d] px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:outline-0 focus:ring-2 focus:ring-purple-700"
                             />
                             <p v-if="err?.phone" class="text-red-500 mt-1 text-xs md:text-sm">{{ err?.phone[0] }}</p>
+                        </div>
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-gray-300">
+                                Nomor Telp Orang Tua (WhatsApp)
+                            </label>
+
+                            <input v-model="form.phoneOrtu"
+                                type="text"
+                                placeholder="Contoh: 628123xxxxxx"
+                                class="w-full rounded-lg border border-white/10 bg-[#1d1d1d] px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:outline-0 focus:ring-2 focus:ring-purple-700"
+                            />
+                            <p v-if="err?.phoneOrtu" class="text-red-500 mt-1 text-xs md:text-sm">{{ err?.phoneOrtu[0] }}</p>
                         </div>
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-300">

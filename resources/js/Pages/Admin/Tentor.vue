@@ -18,6 +18,7 @@ import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
 import axios from 'axios';
 
 const count = useCounter();
+const props = defineProps(['total', 'data', 'label'])
 const colors = [
     "#ef4444", // merah
     "#3b82f6", // biru
@@ -34,18 +35,19 @@ const colors = [
 const backgroundColor = Array.from({ length: 5 }, () => {
     return colors[Math.floor(Math.random() * colors.length)];
 });
-const data = {
-    labels: ["IPA","B Inggris", "Fisika", "Kimia", "Biologi"],
+const data = ref({
+    labels: props?.label,
     datasets: [
         {
-            data: [1,2,3,4,5],
+            data: [0],
+            label: 'Tentor',
             backgroundColor,
             borderWidth: 1,
             hoverOffset: 0,
             cutout: "72%",
         },
     ],
-};
+});
 
 const options = {
     responsive: true,
@@ -123,6 +125,7 @@ function handlepage(page){
 function handlesuccescreate(){
     modalcreate.value = false;
     success('Berhasil menambah pengajar baru🫡');
+    get()
 }
 
 function wali(){
@@ -130,7 +133,18 @@ function wali(){
 }
 onMounted(()=>{
     get()
-    count.start(16, 80);
+    count.start(props?.total, 80);
+    setTimeout(() => {
+        data.value = {
+            ...data.value,
+            datasets: [
+                {
+                    ...data.value.datasets[0],
+                    data: props?.data,
+                },
+            ],
+        };
+    }, 100);
 })
 </script>
 
@@ -195,6 +209,7 @@ onMounted(()=>{
                 </div>
             </div>
         </section>
+        
         <template v-if="!loading">
             <template v-if="tentors.length > 0">
                 <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 md:gap-5 mb-3">

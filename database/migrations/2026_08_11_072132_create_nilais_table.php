@@ -22,7 +22,7 @@ return new class extends Migration
                 indexName: 'absensis_ujian_id'
             );
             $table->float('nilai');
-            $table->string('catatan')->nullable();
+            $table->text('catatan', 200)->nullable();
             $table->timestamps();
         });
     }

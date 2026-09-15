@@ -17,4 +17,8 @@ class TahunAjaran extends Model
     {
         return $this->hasMany(Rombel::class, 'tahun_id');
     }
+    public function alumni(): HasMany
+    {
+        return $this->hasMany(Alumni::class, 'tahun_id');
+    }
 }

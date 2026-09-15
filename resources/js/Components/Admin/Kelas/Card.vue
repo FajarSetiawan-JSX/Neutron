@@ -1,6 +1,7 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { MoreVertical, Pencil, Trash2, Users, GraduationCap } from "lucide-vue-next";
+import { MoreVertical, Pencil, Trash2, Users, GraduationCap, Info } from "lucide-vue-next";
+import Menu from "@/Components/Menu.vue";
 const emit = defineEmits(['update', 'hapus']);
 defineProps({
     kelas: {
@@ -53,7 +54,11 @@ onBeforeUnmount(() => {
                     leave-from-class="opacity-100 scale-100"
                     leave-to-class="opacity-0 scale-95"
                 >
-                    <div v-if="showMenu" class="absolute right-0 mt-2 w-40 overflow-hidden rounded-xl border border-white/10 bg-[#222] shadow-2xl">
+                    <div v-if="showMenu" class="absolute right-0 mt-2 w-40 z-10 overflow-hidden rounded-xl border border-white/10 bg-[#222] shadow-2xl">
+                        <Menu :href="route('admin.kelas.detail', kelas?.slug)" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-sky-500/10">
+                            <Info class="h-4 w-4 text-sky-400" />
+                            Detail
+                        </Menu>
                         <button @click="emit('update', kelas)" class="flex w-full items-center gap-3 px-4 py-3 text-sm text-white transition hover:bg-white/10">
                             <Pencil class="h-4 w-4 text-yellow-400" />
                             Edit
@@ -65,11 +70,11 @@ onBeforeUnmount(() => {
                     </div>
                 </Transition>
             </div>
-            <div class="absolute bottom-4 left-4 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur">
+            <div class="absolute bottom-4 left-4 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur z-0">
                 {{ kelas.singkatan }}
             </div>
 
-            <div class="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1 text-sm text-white backdrop-blur">
+            <div class="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1 text-sm text-white backdrop-blur z-0">
                 <Users class="h-4 w-4" />
                 {{ kelas.siswa }}
             </div>

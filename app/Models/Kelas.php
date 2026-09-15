@@ -24,9 +24,4 @@ class Kelas extends Model
     {
         return $this->hasMany(KelasSiswa::class, 'kelas_id');
     }
-
-    public function log(): HasMany
-    {
-        return $this->hasMany(LogKelas::class, 'kelas_id');
-    }
 }

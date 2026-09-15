@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['nama', 'slug', 'deskripsi', 'active'])]
 class Ujian extends Model
 {
-    public function absensi(): HasMany
+    public function nilai(): HasMany
     {
-        return $this->hasMany(Nilai::class, 'nilai_id');
+        return $this->hasMany(Nilai::class, 'ujian_id');
     }
 }

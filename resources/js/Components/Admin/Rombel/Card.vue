@@ -1,19 +1,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import {
-    MoreVertical,
-    Users,
-    UserRound,
-    Pencil,
-    GraduationCap,
-} from 'lucide-vue-next'
+import { MoreVertical, Users, Pencil, GraduationCap } from 'lucide-vue-next'
+import Menu from '@/Components/Menu.vue';
 
-const isMenuOpen = ref(false)
-
+const isMenuOpen = ref(false);
+const props = defineProps(['rombel']);
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value
 }
-
 const closeMenu = () => {
     isMenuOpen.value = false
 }
@@ -34,13 +28,11 @@ onUnmounted(() => {
 })
 
 const editGroup = () => {
-    isMenuOpen.value = false
-    console.log('Edit group')
+    
 }
 
 const manageTeacher = () => {
-    isMenuOpen.value = false
-    console.log('Manage teacher')
+    
 }
 </script>
 
@@ -50,14 +42,17 @@ const manageTeacher = () => {
             <div class="min-w-0">
                 <div class="mb-2 flex items-center gap-2">
                     <span class="rounded-md bg-rose-50 px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-rose-400">
-                        SOCIAL
+                        {{ props?.rombel?.mapel }}
                     </span>
                     <span class="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-500">
-                        GRADE 11
+                        Tingkat {{ props?.rombel?.tingkat }}
+                    </span>
+                    <span class="rounded-md bg-emerald-100 px-2 py-1 text-[10px] font-medium text-emerald-500">
+                        {{ props?.rombel?.jenjang }}
                     </span>
                 </div>
                 <h3 class="truncate text-md font-semibold text-slate-800 font-primary">
-                    Kelas 11 - IPS 1
+                    {{ props?.rombel?.nama }}
                 </h3>
             </div>
             <div class="group-menu relative ml-3 shrink-0">
@@ -75,7 +70,7 @@ const manageTeacher = () => {
                     <div v-if="isMenuOpen" class="absolute right-0 top-9 z-30 w-36 overflow-hidden rounded-lg border border-slate-200 bg-white p-1 shadow-lg" >
                         <button type="button" @click="editGroup" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50">
                             <Pencil class="h-4 w-4 text-slate-400" />
-                            <span>Edit</span>
+                            <span>Audit</span>
                         </button>
                         <button type="button" @click="manageTeacher" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50">
                             <GraduationCap class="h-4 w-4 text-slate-400"/>
@@ -96,24 +91,25 @@ const manageTeacher = () => {
                 </span>
             </div>
             <span class="text-base font-semibold text-slate-800">
-                35
+                {{ props?.rombel?.siswa }}
             </span>
         </div>
         <div class="mt-4 flex items-center gap-3">
-            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-semibold text-blue-500">
-                AH
-            </div>
+            <img
+                :src="props?.rombel?.avatar ? `/storage/${props?.rombel?.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(props?.rombel?.tentor)}&background=DC2626&color=fff`"
+                class="w-10 h-10 rounded-full"
+            />
             <div class="min-w-0 leading-tight">
                 <p class="text-sm text-slate-400">
-                    Homeroom Teacher
+                    Tentor
                 </p>
                 <p class="truncate text-sm font-medium text-slate-700">
-                    Ahmad Hidayat
+                    {{ props?.rombel?.tentor }}
                 </p>
             </div>
         </div>
-        <button type="button" class="mt-4 h-9 w-full rounded-lg border border-rose-300 bg-white text-sm font-medium text-rose-500 transition-colors hover:bg-rose-50">
-            Manage Group
-        </button>
+        <Menu :href="route('admin.rombel.siswa', props?.rombel?.id)" class="mt-4 p-2 w-full text-center block rounded-lg border border-rose-300 bg-white text-sm font-medium text-rose-500 hover:bg-rose-50 active:scale-95 transition-all duration-300">
+            Detail siswa
+        </Menu>
     </div>
 </template>

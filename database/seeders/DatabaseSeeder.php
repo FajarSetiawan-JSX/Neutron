@@ -8,6 +8,7 @@ use App\Models\Mapel;
 use App\Models\Role;
 use App\Models\Siswa;
 use App\Models\TahunAjaran;
+use App\Models\Tipe;
 use App\Models\Ujian;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -132,6 +133,16 @@ class DatabaseSeeder extends Seeder
         TahunAjaran::create([
             'tahun' => '2026 / 2027',
             'active' => true
+        ]);
+
+        //Tipe
+        Tipe::create([
+            'nama' => 'Pertemuan',
+            'slug' => 'pertemuan'
+        ]);
+        Tipe::create([
+            'nama' => 'Tambahan',
+            'slug' => 'tambahan'
         ]);
     }
 }

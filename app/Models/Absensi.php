@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['rombel_siswa_id', 'pertemuan_id', 'kehadiran'])]
+#[Fillable(['rombel_siswa_id', 'pertemuan_id'])]
 class Absensi extends Model
 {
     public function pertemuan(): BelongsTo

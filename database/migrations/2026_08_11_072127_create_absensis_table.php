@@ -16,12 +16,11 @@ return new class extends Migration
             $table->foreignId('pertemuan_id')->constrained(
                 table: 'pertemuans',
                 indexName: 'absensis_pertemuan_id'
-            );
+            )->cascadeOnDelete();
             $table->foreignId('rombel_siswa_id')->constrained(
                 table: 'rombel_siswas',
                 indexName: 'absensis_siswa_id'
             )->cascadeOnDelete();
-            $table->boolean('kehadiran');
             $table->timestamps();
         });
     }

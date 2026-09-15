@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\GetKelasFromTentorResource;
 use App\Http\Resources\GetKelasResource;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
@@ -21,6 +22,17 @@ class KelasController extends Controller
             $kelases->where('nama', 'like', '%' . $request->search . '%');
         }
         return GetKelasResource::collection($kelases->paginate(6)->withQueryString());
+    }
+
+     public function bytentor(Request $request, $id)
+    {
+        $kelases = Kelas::whereHas('wali.wali', function($query)use($id){
+            $query->where('id', '=', $id);
+        })->with('tingkat.jenjang', 'wali.wali', 'siswa');
+        if ($request->search) {
+            $kelases->where('nama', 'like', '%' . $request->search . '%');
+        }
+        return GetKelasFromTentorResource::collection($kelases->paginate(6)->withQueryString());
     }
 
     /**

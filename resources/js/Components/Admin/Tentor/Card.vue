@@ -53,7 +53,6 @@ function succesmapel(){
     emit('mapel');
 }
 onMounted(() => {
-    console.log('tentor : ', props.tentor);
     document.addEventListener("click", closeMenu);
 });
 
@@ -100,7 +99,7 @@ onBeforeUnmount(() => {
                             Mapel
                         </button>
 
-                        <Menu :href="route('admin.tentor.rombel', props?.tentor?.id)" :class="'flex w-full items-center gap-3 px-4 py-3 text-sm transition hover:bg-sky-50 hover:text-sky-600'">
+                        <Menu :href="route('admin.tentor.rombel', props?.tentor?.slug)" :class="'flex w-full items-center gap-3 px-4 py-3 text-sm transition hover:bg-sky-50 hover:text-sky-600'">
                             <CirclePile :size="17" />
                             Rombel
                         </Menu>
@@ -142,7 +141,7 @@ onBeforeUnmount(() => {
             <p>
                 <span class="font-semibold">Rombel:</span>
                 <span class="font-semibold text-emerald-500">
-                    5
+                    {{ props?.tentor?.rombel }}
                 </span>
             </p>
         </div>
