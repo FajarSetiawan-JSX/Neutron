@@ -8,6 +8,8 @@ import { onMounted, ref } from 'vue';
 import { Atom, Monitor, Users, Award, FileText, Clock, Calendar } from "lucide-vue-next";
 import { formatDate } from '@/Helper.js/DateTime';
 import { useCounter } from '@/Helper.js/counter';
+import PaginationCard from '@/Components/PaginationCard.vue';
+import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
 
 const user = usePage().props?.auth?.user;
 const counttotalsiswa = useCounter();
@@ -17,13 +19,49 @@ const progresabsen = ref(0);
 const ratanilai = ref(0);
 const props = defineProps(['pertemuan']);
 const loading = ref(false);
+const siswas = ref([]);
+const links = ref({});
+
+async function get(page = 1) {
+    try{
+        loading.value = true;
+        const response = await axios.get(`/api/Tentor/pertemuan/${props?.pertemuan?.id}/detail`, {
+            params: {
+                page: page
+            }
+        });
+        console.log(response.data);
+        siswas.value = response?.data?.data ?? []
+        links.value = response?.data?.meta ?? {};
+    }catch(error){
+        eror(error?.response?.status, error?.response?.data?.message);
+    }finally{
+        loading.value = false;
+    }
+}
+function handleprevpage(page){
+    if(page){
+        get(page);
+    }
+}
+function handlenextpage(page){
+    if(page){
+        get(page);
+    }
+}
+function handlepage(page){
+    if(page){
+        get(page);
+    }
+}
 
 onMounted(()=>{
+    get()
     counttotalsiswa.start(props?.pertemuan?.total, 50);
     countabsen.start(props?.pertemuan?.absen, 50);
-    persentase.start(props?.pertemuan?.persentase, 20);
+    persentase.start(Math.round(props?.pertemuan?.persentase), 20);
 
-    const targetabsen = Number(props?.pertemuan?.persentase ?? 0);
+    const targetabsen = Math.round(Number(props?.pertemuan?.persentase ?? 0));
     const interval = setInterval(() => {
         progresabsen.value += 1;
         if (progresabsen.value >= targetabsen) {
@@ -144,6 +182,65 @@ onMounted(()=>{
                 </div>
             </div>
         </section>
+
+        <div class="max-w-screen-xl my-5">
+            <div class="bg-white relative shadow-md sm:rounded-lg overflow-hidden">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                    <div class="w-full md:w-1/2">
+                        <h3 class="text-md font-semibold text-slate-500 font-primary">
+                            Rekap Pertemuan
+                        </h3>
+                    </div>
+                </div>
+                <div class="overflow-x-auto custom-scroll">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-4">No</th>
+                                <th scope="col" class="px-4 py-3">Nama</th>
+                                <th scope="col" class="px-4 py-3">Nis</th>
+                                <th scope="col" class="px-4 py-3">Presensi</th>
+                                <th scope="col" class="px-4 py-3">Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-if="loading">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="my-5">
+                                            <PrimaryLoading size="50" :class="'stroke-emerald-500'" />
+                                            <h1 class="my-5 font-anonymous text-red-500 text-center">Fetching data siswa</h1>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            <template v-else>
+                                <template v-if="siswas.length > 0">
+                                    <tr v-for="(siswa, index) in siswas" :key="siswa?.id" class="border-b" :class="siswa.presensi == 'Hadir' ? 'text-gray-600' : 'text-gray-300'">
+                                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{ (links.current_page - 1) * links.per_page + index + 1 }}</th>
+                                        <td class="px-4 py-3">{{ siswa?.nama }}</td>
+                                        <td class="px-4 py-3">{{ siswa?.nis }}</td>
+                                        <td class="px-4 py-3 max-w-[12rem] truncate">{{ siswa?.presensi }}</td>
+                                        <td class="px-4 py-3">{{ siswa?.nilai }}</td>
+                                    </tr>
+                                </template>
+                                <template v-else>
+                                    <tr>
+                                        <td colspan="5">
+                                            <h1 class="my-5 font-anonymous text-red-500 text-center">Tidak ada siswa</h1>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" />
+            </div>
+        </div>
+        <div class="my-5">
+            <PaginationCard :links="links" :name="'Siswa'" @next="handlenextpage" @page="handlepage" @prev="handleprevpage" />
+        </div>
 
     </Auth>
 </template>

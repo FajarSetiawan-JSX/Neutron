@@ -21,8 +21,26 @@ class AbsensiController extends Controller
      */
     public function index(Request $request)
     {
-        $absen = Absensi::orderBy('created_at', 'desc')->with(['pertemuan.rombel.subjek.mapel', 'siswa.siswa', 'pertemuan.tipe']);
+        $absen = Absensi::whereHas('pertemuan.rombel.tahun', function ($query) {
+            $query->where('active', '=', 1);
+        })->orderBy('created_at', 'desc')->with(['pertemuan.rombel.subjek.mapel', 'siswa.siswa', 'pertemuan.tipe', 'pertemuan.rombel.tingkat.jenjang']);
         if ($request->filled('search')) {
+            $cari = $request->search;
+            $absen = $absen->whereHas('siswa.siswa', function ($query) use ($cari) {
+                $query->where('nama', 'like', '%' . $cari . '%');
+            });
+        }
+        if ($request->filled('jenjang')) {
+            $cari = $request->jenjang;
+            $absen = $absen->whereHas('pertemuan.rombel.tingkat.jenjang', function ($query) use ($cari) {
+                $query->where('id', '=', $cari);
+            });
+        }
+        if ($request->filled('tingkat')) {
+            $cari = $request->tingkat;
+            $absen = $absen->whereHas('pertemuan.rombel.tingkat', function ($query) use ($cari) {
+                $query->where('id', '=', $cari);
+            });
         }
         $absen = $absen->paginate(15)->withQueryString();
         return GetAbsensiResource::collection($absen);
@@ -82,7 +100,7 @@ class AbsensiController extends Controller
             $rombel = Rombel::where('id', '=', $valid['rombel'])->first();
             $ke = 1;
             $last = Pertemuan::where('rombel_id', '=', $rombel->id)->where('tipe_id', '=', 2)->orderBy('pertemuan', 'desc');
-            if($last->exists()){
+            if ($last->exists()) {
                 $last = $last->first();
                 $ke = $last->pertemuan;
             }
@@ -131,16 +149,13 @@ class AbsensiController extends Controller
      */
     public function destroy($ta)
     {
-        $ta = TahunAjaran::where('id', '=', $ta)->first();
-        if (!$ta) {
+        $tahun = TahunAjaran::where('id', '=', $ta)->first();
+        if (!$tahun) {
             return response()->json(['message' => 'ID Tahun Ajaran tidak ada'], 404);
-        }
-        if ($ta->active == 1) {
-            return response()->json(['message' => 'Tahun Ajaran sedang berlangsung'], 409);
         }
         DB::beginTransaction();
         try {
-            Absensi::whereHas('pertemuan.rombel.tahun', function ($query) use ($ta) {
+            $pertemuan = Pertemuan::whereHas('rombel.tahun', function ($query) use ($ta) {
                 $query->where('id', '=', $ta);
             })->delete();
             DB::commit();

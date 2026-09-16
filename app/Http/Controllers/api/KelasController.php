@@ -32,6 +32,9 @@ class KelasController extends Controller
         if ($request->search) {
             $kelases->where('nama', 'like', '%' . $request->search . '%');
         }
+        if($request->tingkat){
+            $kelases->where('tingkat_id', '=', $request->tingkat);
+        }
         return GetKelasFromTentorResource::collection($kelases->paginate(6)->withQueryString());
     }
 

@@ -1,8 +1,12 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { MoreVertical, UserRound, School, MapPin, Phone, Eye, Download, PhoneCall } from 'lucide-vue-next'
+import axios from 'axios';
+import { eror } from '@/Helper.js/Toast';
+import Loading from '../Pertemuan/Loading.vue';
 
 const props = defineProps(['siswa']);
+const loadingdownload = ref(false);
 const showMenu = ref(false)
 const menuRef = ref(null)
 const handleClickOutside = (event) => {
@@ -14,6 +18,28 @@ const handleClickOutside = (event) => {
     }
 }
 
+async function download() {
+    try{
+        loadingdownload.value = true;
+        const response = await axios.get(`/api/Tentor/download/${props?.siswa?.id}`, {
+            responseType: 'blob'
+        });
+        const url = URL.createObjectURL(response.data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'rapot.pdf';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }catch(error){
+        console.log(error.response)
+        const data = JSON.parse(await error.response.data.text());
+        eror(error?.response?.status, data?.message);
+    }finally{
+        loadingdownload.value = false;
+    }
+}
 onMounted(() => {
     document.addEventListener('click', handleClickOutside)
 })
@@ -56,7 +82,7 @@ onBeforeUnmount(() => {
                         <span>Detail</span>
                     </button>
 
-                    <button type="button" class="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50" @click="showMenu = false">
+                    <button type="button" @click="download" class="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50">
                         <Download class="h-4 w-4 text-slate-500" />
                         <span>Unduh</span>
                     </button>
@@ -130,4 +156,5 @@ onBeforeUnmount(() => {
             </div>
         </div>
     </div>
+    <Loading v-if="loadingdownload" />
 </template>

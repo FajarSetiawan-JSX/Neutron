@@ -4,17 +4,19 @@ import { Head } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { eror } from '@/Helper.js/Toast';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import PaginationCard from '@/Components/PaginationCard.vue';
 import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
 import CardDetail from '@/Components/Tentor/Kelas/CardDetail.vue';
 import { CalendarDays, GraduationCap, User, UserCheck, Users } from "lucide-vue-next";
 import { formatDate } from '@/Helper.js/DateTime';
 import { useCounter } from '@/Helper.js/counter';
+import Search from '@/Components/21Dev/Search.vue';
 
 const total = useCounter();
 const aktif = useCounter();
 const persentase = ref(0);
+const search = ref('')
 const user = usePage().props?.auth?.user;
 const props = defineProps(['kelas', 'total', 'aktif', 'ta']);
 const loading = ref(false);
@@ -25,7 +27,8 @@ async function get(page = 1) {
         loading.value = true;
         const response = await axios.get(`/api/Tentor/kelas/${props?.kelas?.id}/siswa/${props?.ta?.id}`, {
             params: {
-                page: page
+                page: page,
+                search: search.value
             }
         });
         siswas.value = response?.data?.data ?? [];
@@ -51,6 +54,11 @@ function handlepage(page){
         get(page);
     }
 }
+watch((search), (newsearch)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+}, 1000)
 onMounted(()=>{
     total.start(props?.total);
     aktif.start(props?.aktif);
@@ -188,10 +196,8 @@ onMounted(()=>{
         </section>
         
         <section class="my-5">
-            <div class="p-3 shadow-sm bg-white flex items-center justify-end my-5">
-                <select name="" id="" class="rounded-lg border-0 ring-1 ring-slate-500">
-                    <option value="">Filter Tingkat</option>
-                </select>
+            <div class="p-3 shadow-sm bg-white my-5">
+                <Search v-model="search" placeholder="Cari siswa..." />
             </div>
             <template v-if="!loading">
                 <template v-if="siswas.length > 0">

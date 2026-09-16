@@ -10,7 +10,6 @@ import PrimaryLoading from "@/Components/21Dev/PrimaryLoading.vue";
 const emit = defineEmits(['close', 'success']);
 const props = defineProps(['ta']);
 const loading = ref(false);
-const id = ref('');
 async function hapus() {
     try{
         loading.value = true;
@@ -18,16 +17,11 @@ async function hapus() {
         success('Berhasil menghapus presensi 🥲');
         emit('success')
     }catch(error){
-        eror(error?.response?.status, error?.response?.statusText);
+        eror(error?.response?.status, error?.response?.data?.message);
     }finally{
         loading.value = false;
     }
 }
-watch(()=>props.id, (newmapel)=>{
-    if(newmapel){
-        id.value = newmapel;
-    }
-},{immediate:true})
 </script>
 
 <template>
@@ -41,7 +35,7 @@ watch(()=>props.id, (newmapel)=>{
                         </div>
                         <div class="my-4">
                             <h1 class="text-white font-primary text-xl font-semibold text-center mb-2">Hapus Presensi TA {{ props?.ta?.tahun }}?</h1>
-                            <p class="text-center text-white/70 font-primary text-sm font-semibold">Harap lakukan pengunduhan dokumen laporan terlebih dahulu dan pastikan Tahun Ajaran yang anda pilih sudah berlalu. Developer membangun sistem ini dengan integrasi data, menghapus presensi berarti menghapus data nilai juga. Apakah yakin? kalo udah dihapus ga bisa direstore loh ya</p>
+                            <p class="text-center text-white/70 font-primary text-sm font-semibold">Harap lakukan pengunduhan dokumen laporan terlebih dahulu dan pastikan Tahun Ajaran <span class="text-white">{{ props?.ta?.tahun }} sudah dinyatakan berakhir.</span> Developer membangun sistem ini dengan integrasi data. Langkah ini akan menghapus pertemuan, absensi dan nilai. Apakah yakin menghapus presensi TA <span class="text-red-500">{{ props?.ta?.tahun }}</span> ? kalo udah dihapus ga bisa direstore loh ya</p>
                         </div>
                         <div class="mt-10 flex justify-end gap-3">
                             <GradientButton color="red" type="submit" :disabled="loading" :class="loading ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer'" class="flex items-center justify-center w-full gap-2 font-primary py-3 px-6 text-white rounded-xl">

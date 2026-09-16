@@ -20,17 +20,13 @@ class NilaiController extends Controller
      */
     public function index(Request $request)
     {
-        $nilai = Nilai::with(['ujian', 'absensi.pertemuan.siswa.siswa', 'absensi.pertemuan.rombel.subjek.mapel', 'absensi.pertemuan.rombel.tingkat.jenjang', 'absensi.pertemuan.rombel.tahun']);
+        $nilai = Nilai::whereHas('absensi.pertemuan.rombel.tahun', function($query){
+            $query->where('active', '=', 1);
+        })->with(['ujian', 'absensi.siswa.siswa', 'absensi.pertemuan.rombel.subjek.mapel', 'absensi.pertemuan.rombel.tingkat.jenjang'])->orderBy('created_at', 'desc');
         if ($request->filled('search')) {
             $cari = $request->search;
-            $nilai = $nilai->whereHas('absensi.pertemuan.siswa.siswa', function ($query) use ($cari) {
+            $nilai = $nilai->whereHas('absensi.siswa.siswa', function ($query) use ($cari) {
                 $query->where('nama', 'like', '%' . $cari . '%');
-            });
-        }
-        if ($request->filled('tahun')) {
-            $tahun = $request->tahun;
-            $nilai = $nilai->whereHas('absensi.pertemuan.rombel.tahun', function ($query) use ($tahun) {
-                $query->where('id', '=', $tahun);
             });
         }
         if ($request->filled('tingkat')) {

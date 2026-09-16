@@ -6,18 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\GetSiswaResource;
 use App\Http\Resources\GetSiswaRombelResource;
 use App\Http\Resources\Tentor\GetSiswaKelasResource;
+use App\Models\Absensi;
 use App\Models\Kelas;
 use App\Models\KelasSiswa;
 use App\Models\LogKelas;
 use App\Models\Mapel;
+use App\Models\Nilai;
+use App\Models\Pertemuan;
 use App\Models\Rombel;
 use App\Models\RombelSiswa;
 use App\Models\Siswa;
 use App\Models\SubjekSiswa;
 use App\Models\TahunAjaran;
 use App\Models\Tingkat;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -415,5 +421,170 @@ class SiswaController extends Controller
         $siswa = Siswa::where('id', '=', $id)->first();
         //$siswa->delete();
         return response()->json(['message' => 'Berhasil hit end point API']);
+    }
+
+    public function recap(Request $request, $id)
+    {
+        $siswa = Siswa::where('id', $id)->first();
+        if (!$siswa) {
+            return response()->json(['message' => 'Siswa tidak ditemukan'], 404);
+        }
+        $tahun = TahunAjaran::where('active', 1)->first();
+        $rombels = Rombel::where('tahun_id', $tahun->id)->whereHas('siswa.siswa', function ($query) use ($id) {
+            $query->where('id', $id);
+        })->with(['subjek.mapel', 'pertemuan.absensi.nilai'])->get();
+        $result = $rombels->map(function ($rombel) use ($id, $request) {
+            $total = $rombel->pertemuan()->where('tipe_id', 1)->when($request->start && $request->end, function ($query) use ($request) {
+                $query->whereBetween('created_at', [$request->start . ' 00:00:00', $request->end . ' 23:59:59']);
+            })->count();
+            $hadir = Absensi::whereHas('siswa.siswa', function ($query) use ($id) {
+                $query->where('id', $id);
+            })->whereHas('pertemuan', function ($query) use ($rombel) {
+                $query->where('rombel_id', $rombel->id)->where('tipe_id', 1);
+            })->when($request->start && $request->end, function ($query) use ($request) {
+                $query->whereBetween('created_at', [
+                    $request->start . ' 00:00:00',
+                    $request->end . ' 23:59:59'
+                ]);
+            })->count();
+            $nilai = Nilai::whereHas('absensi.siswa.siswa', function ($query) use ($id) {
+                $query->where('id', $id);
+            })->whereHas('absensi.pertemuan', function ($query) use ($rombel) {
+                $query->where('rombel_id', $rombel->id)->where('tipe_id', 1);
+            })->when($request->start && $request->end, function ($query) use ($request) {
+                $query->whereBetween('created_at', [$request->start . ' 00:00:00', $request->end . ' 23:59:59']);
+            })->with('ujian')->get()->map(function ($nilai) {
+                return [
+                    'id' => $nilai->id,
+                    'ujian' => $nilai->ujian->nama,
+                    'nilai' => $nilai->nilai,
+                    'catatan' => $nilai->catatan,
+                    'tanggal' => $nilai->created_at,
+                ];
+            });
+            return [
+                'id' => $rombel->id,
+                'nama' => $rombel->name,
+                'mapel' => $rombel->subjek->mapel->singkatan,
+                'total' => $total,
+                'hadir' => $hadir,
+                'tidak' => $total - $hadir,
+                'nilai' => $nilai,
+            ];
+        });
+        return response()->json(['data' => $result]);
+    }
+
+    public function download(Request $request, $id)
+    {
+        $user = Auth::user();
+        if ($user->role_id == 1) {
+            $valid = Validator::make($request->all(), [
+                'ta' => 'required|exists:tahun_ajarans,id',
+                'siswa' => 'required|exists:siswas,id',
+                'start' => 'required|date',
+                'end' => 'required|date|after_or_equal:start'
+            ], [
+                'ta.required' => 'Tahun Ajaran wajib diisi',
+                'ta.exists' => 'ID Tahun Ajaran tidak ditemukan',
+                'siswa.required' => 'Siswa wajib diisi',
+                'siswa.exists' => 'ID siswa tidak ditemukan',
+                'start.required' => 'Tanggal mulai wajib diisi.',
+                'start.date' => 'Tanggal mulai tidak valid.',
+                'end.required' => 'Tanggal akhir wajib diisi.',
+                'end.date' => 'Tanggal akhir tidak valid.',
+                'end.after_or_equal' => 'Tanggal akhir tidak boleh sebelum tanggal mulai.',
+            ])->validate();
+            $idsiswa = $valid['siswa'];
+            $tahun = TahunAjaran::find($valid['ta']);
+            $start = Carbon::parse($valid['start'])->startOfDay();
+            $end = Carbon::parse($valid['end'])->endOfDay();
+        } else {
+            $idsiswa = $id;
+            $tahun = TahunAjaran::where('active', 1)->first();
+            $start = now()->startOfMonth();
+            $end = now()->endOfMonth();
+        }
+        if (!$tahun) {
+            return response()->json(['message' => 'Tahun Ajaran tidak ditemukan'], 404);
+        }
+
+        if ($user->role_id == 1 && $tahun->active != 1) {
+            return response()->json(['message' => 'Tahun Ajaran sedang tidak aktif'], 409);
+        }
+        DB::beginTransaction();
+        try {
+            $siswa = Siswa::where('id', '=', $idsiswa)->first();
+            $tahun = TahunAjaran::where('active', '=', 1)->first();
+            $siswa = [
+                'nama' => $siswa->nama,
+                'nis' => $siswa->nis,
+                'kelas' => $siswa->kelasSekarang->kelas->nama,
+                'sekolah' => $siswa->sekolah
+            ];
+            $rombels = Rombel::where('tahun_id', '=', $tahun->id)->whereHas('siswa.siswa', function ($query) use ($idsiswa) {
+                $query->where('id', '=', $idsiswa);
+            })->with(['subjek.mapel', 'pertemuan.absensi.nilai.ujian'])->get();
+            $absen = $rombels->map(function ($rombel) use ($start, $end, $idsiswa) {
+                $total = Pertemuan::whereBetween('created_at', [$start, $end])->where('rombel_id', '=', $rombel->id)->where('tipe_id', '=', 1)->count();
+
+                $absen = Absensi::whereBetween('created_at', [$start, $end])->whereHas('siswa.siswa', function ($query) use ($idsiswa) {
+                    $query->where('id', '=', $idsiswa);
+                })->whereHas('pertemuan.rombel', function ($q) use ($rombel) {
+                    $q->where('id', '=', $rombel->id);
+                })->with('pertemuan.tipe');
+
+                $hadir = $absen->whereHas('pertemuan.tipe', function ($q) {
+                    $q->where('nama', '=', 'Pertemuan');
+                })->count();
+
+                $tambahan = $absen->whereHas('pertemuan.tipe', function ($q) {
+                    $q->where('nama', '=', 'Tambahan');
+                })->count();
+
+                return [
+                    'nama' => $rombel->nama,
+                    'mapel' => $rombel->subjek->mapel->nama,
+                    'jumlah' => $total,
+                    'hadir' => $hadir,
+                    'tidak' => $total - $hadir,
+                    'tambahan' => $tambahan
+                ];
+            });
+            $nilai = $rombels->map(function ($rombel) use ($start, $end, $idsiswa) {
+                $nilai = Nilai::whereHas('absensi.pertemuan.rombel', function ($query) use ($rombel) {
+                    $query->where('id', '=', $rombel->id);
+                })->whereBetween('created_at', [$start, $end])->with(['ujian'])->avg('nilai');
+
+                $my = Nilai::whereHas('absensi.pertemuan.rombel', function ($query) use ($rombel) {
+                    $query->where('id', '=', $rombel->id);
+                })->whereBetween('created_at', [$start, $end])->with(['ujian'])->whereHas('absensi.siswa.siswa', function ($q) use ($idsiswa) {
+                    $q->where('id', '=', $idsiswa);
+                });
+                return [
+                    'mapel' => $rombel->subjek->mapel->nama,
+                    'global' => $nilai,
+                    'avg' => $my->avg('nilai'),
+                    'nilai' => $my->get()->map(function ($n) {
+                        return [
+                            'nilai' => $n->nilai,
+                            'tipe' => $n->ujian->nama,
+                            'catatan' => $n->catatan ?? ''
+                        ];
+                    })
+                ];
+            });
+            $pdf = Pdf::loadView('rapot', ['siswa' => $siswa, 'tahun' => $tahun, 'absens' => $absen, 'nilais' => $nilai]);
+            DB::commit();
+            return $pdf->download('rapot' . '.pdf');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error([
+                'pesan' => $e->getMessage(),
+                'baris' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
     }
 }

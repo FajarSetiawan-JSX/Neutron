@@ -5,8 +5,10 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Tentor\GetPertemuanResource;
 use App\Http\Resources\Tentor\GetPertemuansResource;
+use App\Http\Resources\Tentor\GetSiswaPertemuanDetailResource;
 use App\Models\Pertemuan;
 use App\Models\Rombel;
+use App\Models\RombelSiswa;
 use App\Models\Tipe;
 use Exception;
 use Illuminate\Http\Request;
@@ -72,9 +74,20 @@ class PertemuanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $pertemuan = Pertemuan::where('id', '=', $id)->first();
+        if (!$pertemuan) {
+            return response()->json(['message' => 'Pertemuan tidak ditmukan'], 404);
+        }
+        $siswas = RombelSiswa::whereHas('rombel.pertemuan', function ($query) use ($pertemuan) {
+            $query->where('id', '=', $pertemuan->id);
+        })->with(['siswa', 'absensi.nilai'])->withExists([
+            'absensi as hadir' => function ($query) use ($pertemuan) {
+                $query->where('pertemuan_id', $pertemuan->id);
+            }
+        ])->orderByDesc('hadir')->paginate(10)->withQueryString();
+        return GetSiswaPertemuanDetailResource::collection($siswas);
     }
 
     /**

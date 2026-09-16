@@ -31,6 +31,12 @@ class RombelController extends Controller
         if ($request->filled('search')) {
             $rombels = $rombels->where('name', 'like', '%' . $request->Search . '%');
         }
+        if ($request->filled('tingkat')) {
+            $cari = $request->tingkat;
+            $rombels = $rombels->whereHas('tingkat', function ($query) use ($cari) {
+                $query->where('id', '=', $cari);
+            });
+        }
         $rombels = $rombels->paginate(6)->withQueryString();
         return GetRombelsResource::collection($rombels);
     }
@@ -207,6 +213,12 @@ class RombelController extends Controller
         if ($request->filled('search')) {
             $cari = $request->search;
             $rombels = $rombels->where('name', 'like', '%' . $cari . '%');
+        }
+        if ($request->filled('tingkat')) {
+            $cari = $request->tingkat;
+            $rombels = $rombels->whereHas('tingkat', function ($query) use ($cari) {
+                $query->where('id', '=', $cari);
+            });
         }
         return TentorGetRombelsResource::collection($rombels->paginate(6)->withQueryString());
     }

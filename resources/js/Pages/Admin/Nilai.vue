@@ -5,14 +5,19 @@ import AnimatedGlowingSearchBar from '@/Components/21Dev/AnimatedGlowingSearchBa
 import { usePage } from '@inertiajs/vue3';
 import { TrendingUp, TrendingDown, TrendingUpDown } from "lucide-vue-next";
 import PaginationCard from '@/Components/PaginationCard.vue';
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
 import { onMounted } from 'vue';
 import { eror } from '@/Helper.js/Toast';
 import axios from 'axios';
 import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
+import { useCounter } from '@/Helper.js/counter';
+import { formatDate } from '@/Helper.js/DateTime';
 
 const user = usePage().props?.auth?.user;
-const props = defineProps(['tahun', 'tingkat', 'jenjang']);
+const props = defineProps(['tahun', 'tingkat', 'jenjang', 'min', 'max', 'avg']);
+const countavg = useCounter();
+const countmax = useCounter();
+const countmin = useCounter();
 const search = ref('');
 const tingkat = ref('');
 const jenjang = ref('');
@@ -34,12 +39,10 @@ async function get(page = 1) {
                 tahun: tahun.value
             }
         });
-        console.log(response.data);
         nilais.value = response?.data?.data;
         links.value = response?.data?.meta;
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
-        console.log(error.response);
     }finally{
         loading.value = false;
     }
@@ -65,13 +68,26 @@ function toggleMenu(id) {
 function closeMenu() {
     openMenu.value = null;
 }
-function handlesuccessdelete(){
-    modaldelete.value = false;
-    get();
-}
+watch((search),(newsearch)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+}, {immediate:true});
+watch((jenjang),(newjenjang)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+}, {immediate:true});
+watch((tingkat),(newtingkat)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+}, {immediate:true});
 onMounted(()=>{
     get();
-    console.log(props.tahun)
+    countavg.start(props?.avg);
+    countmax.start(props.max);
+    countmin.start(props.min);
     document.addEventListener('click', closeMenu);
 })
 onBeforeUnmount(() => {
@@ -95,7 +111,7 @@ onBeforeUnmount(() => {
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">
@@ -121,7 +137,7 @@ onBeforeUnmount(() => {
                     </div>
                     <div class="text-black bg-white">
                         <h1 class="text-lg">Nilai tertinggi</h1>
-                        <p class="text-sm text-emerald-500">100</p>
+                        <p class="text-sm text-emerald-500">{{ countmax.count }}</p>
                     </div>
                 </div>
             </div>
@@ -132,7 +148,7 @@ onBeforeUnmount(() => {
                     </div>
                     <div class="text-black bg-white">
                         <h1 class="text-lg">Rata rata nilai</h1>
-                        <p class="text-sm text-sky-500">85</p>
+                        <p class="text-sm text-sky-500">{{ countavg.count }}</p>
                     </div>
                 </div>
             </div>
@@ -143,28 +159,25 @@ onBeforeUnmount(() => {
                     </div>
                     <div class="text-black bg-white">
                         <h1 class="text-lg">Nilai terendah</h1>
-                        <p class="text-sm text-red-500">50</p>
+                        <p class="text-sm text-red-500">{{ countmin.count }}</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="my-3.5 relative overflow-visible">
-            <div class="flex items-center justify-between bg-white p-3 gap-x-3 rounded-t-lg">
+            <div class="flex items-center justify-between flex-wrap gap-y-2 bg-white p-3 gap-x-3 rounded-t-lg">
                 <div>
+                    <h1 class="text-md font-primary text-slate-700">Tahun Ajaran <span class="text-slate-900">{{ props?.tahun?.tahun }}</span></h1>
                 </div>
                 <div class="flex items-center justify-end flex-wrap gap-2">
-                    <select name="" id="" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
+                    <select name="" id="" v-model="tingkat" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
                         <option selected value="">Filter Tingkat</option>
                         <option :value="tingkat?.id" v-for="tingkat in props?.tingkat">{{ tingkat?.tingkat }}</option>
                     </select>
-                    <select name="" id="" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
+                    <select name="" id="" v-model="jenjang" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
                         <option selected value="">Filter Jenjang</option>
                         <option :value="jenjang?.id" v-for="jenjang in props?.jenjang">{{ jenjang?.slug }}</option>
-                    </select>
-                    <select name="" id="" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
-                        <option selected value="">Tahun Ajaran</option>
-                        <option v-for="tahun in props?.tahun" :value="tahun?.id">{{ tahun?.tahun }}</option>
                     </select>
                 </div>
             </div>
@@ -174,15 +187,15 @@ onBeforeUnmount(() => {
                         <tr>
                             <th scope="col" class="px-4 py-4">No</th>
                             <th scope="col" class="px-4 py-3">Nama</th>
-                            <th scope="col" class="px-4 py-3">TA</th>
                             <th scope="col" class="px-4 py-3">Mapel</th>
                             <th scope="col" class="px-4 py-3">Pertemuan</th>
                             <th scope="col" class="px-4 py-3">Jenis nilai</th>
                             <th scope="col" class="px-4 py-3">Nilai</th>
                             <th scope="col" class="px-4 py-3">Tanggal</th>
-                            <th scope="col" class="px-4 py-3">
+                            <th scope="col" class="px-4 py-3">Catatan</th>
+                            <!-- <th scope="col" class="px-4 py-3">
                                 <span class="sr-only">Actions</span>
-                            </th>
+                            </th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -200,14 +213,15 @@ onBeforeUnmount(() => {
                             <template v-if="nilais.length > 0">
                                 <tr v-for="(nilai, index) in nilais" class="border-b">
                                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{ (links.current_page - 1) * links.per_page + index + 1 }}</th>
-                                    <td class="px-4 py-3">Andre Gunawan</td>
-                                    <td class="px-4 py-3">2026</td>
-                                    <td class="px-4 py-3">1</td>
-                                    <td class="px-4 py-3 max-w-[12rem] truncate">IPA</td>
-                                    <td class="px-4 py-3">UTS</td>
-                                    <td class="px-4 py-3">85</td>
-                                    <td class="px-4 py-3">21 Januari 2026</td>
-                                    <td class="px-4 py-3 flex items-center justify-end absolute right-0">
+                                    <td class="px-4 py-3">{{ nilai?.nama }}</td>
+                                    <td class="px-4 py-3">{{ nilai?.mapel }}</td>
+                                    <td class="px-4 py-3">{{nilai?.pertemuan }}</td>
+                                    <td class="px-4 py-3 max-w-[12rem] truncate">{{ nilai?.jenis }}</td>
+                                    <td class="px-4 py-3" :class="Number(nilai?.nilai) >= 80 ? 'text-emerald-500' : Number(nilai?.nilai) >= 60 && Number(nilai?.nilai) < 80 ? 'text-slate-500' : 'text-red-500'">{{ nilai?.nilai }}</td>
+                                    <td class="px-4 py-3">{{ formatDate(nilai?.tanggal) }}</td>
+                                    <td class="px-4 py-3">{{ nilai?.catatan?.length > 20 ? nilai.catatan.substring(0, 20) + '...' : nilai?.catatan }}
+                                    </td>
+                                    <!-- <td class="px-4 py-3 flex items-center justify-end absolute right-0">
                                         <button @click.stop="toggleMenu(nilai.id)" class="inline-flex items-center text-sm font-medium hover:bg-gray-100 p-1.5 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none" type="button">
                                             <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -234,12 +248,12 @@ onBeforeUnmount(() => {
                                                 </li>
                                             </ul>
                                         </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </template>
                             <template v-else>
                                 <tr>
-                                    <td colspan="7">
+                                    <td colspan="8">
                                         <h1 class="my-5 font-anonymous text-red-500 text-center">Tidak ada nilai siswa</h1>
                                     </td>
                                 </tr>

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absensi;
 use App\Models\Jenjang;
 use App\Models\Kelas;
 use App\Models\KelasSiswa;
 use App\Models\Mapel;
+use App\Models\Nilai;
+use App\Models\Pertemuan;
 use App\Models\Rombel;
 use App\Models\Siswa;
 use App\Models\TahunAjaran;
@@ -145,10 +148,47 @@ class AdminRouteController extends Controller
         if (!$siswa) {
             return abort(404, 'Siswa tidak ditemukan');
         }
-        $kelas = $siswa->kelasSekarang->kelas;
         $ta = TahunAjaran::where('active', '=', 1)->first();
-        return Inertia::render('Admin/DetailSiswa', ['siswa' => $siswa, 'ta' => $ta, 'kelas' => $siswa->kelasSekarang->kelas]);
+        $avg = Nilai::whereHas('absensi.siswa.siswa', function ($query) use ($siswa) {
+            $query->where('id', '=', $siswa->id);
+        })->whereHas('absensi.siswa.rombel.tahun', function ($query) use ($ta) {
+            $query->where('id', '=', $ta->id);
+        })->avg('nilai');
+        $pertemuan = Pertemuan::where('tipe_id', '=', 1)->whereHas('rombel.tahun', function ($query) use ($ta) {
+            $query->where('id', '=', $ta->id);
+        })->whereHas('rombel.siswa.siswa', function ($q) use ($siswa) {
+            $q->where('id', '=', $siswa->id);
+        })->count();
+        $hadir = Absensi::whereHas('pertemuan', function ($q) use ($siswa) {
+            $q->where('tipe_id', '=', 1);
+        })->whereHas('siswa.siswa', function ($x) use ($siswa) {
+            $x->where('id', '=', $siswa->id);
+        })->whereHas('pertemuan.rombel.tahun', function ($query) use ($ta) {
+            $query->where('id', '=', $ta->id);
+        })->count();
+        $tidak = $pertemuan - $hadir;
+        $persentase = $pertemuan > 0 ? ($hadir / $pertemuan) * 100 : 0;
+
+        $rombels = Rombel::whereHas('siswa.siswa', function ($query) use ($siswa) {
+            $query->where('id', '=', $siswa->id);
+        })->where('tahun_id', '=', $ta->id)->with('subjek.mapel', 'pertemuan.absensi.nilai')->get();
+        $label = [];
+        $data = [];
+        foreach ($rombels as $rombel) {
+            $label[] = $rombel->subjek->mapel->singkatan;
+            $nilai = $rombel->pertemuan
+                ->flatMap(function ($pertemuan) use ($siswa) {
+                    return $pertemuan->absensi
+                        ->filter(function ($absensi) use ($siswa) {
+                            return $absensi->siswa->siswa_id == $siswa->id;
+                        })->pluck('nilai.nilai');
+                })->filter()->avg();
+            $data[] = round($nilai ?? 0, 2);
+        }
+
+        return Inertia::render('Admin/DetailSiswa', ['siswa' => $siswa, 'ta' => $ta, 'kelas' => $siswa->kelasSekarang->kelas ?? 'belum memilih kelas', 'avg' => $avg ?? 0, 'hadir' => $hadir, 'tidak' => $tidak, 'persentase' => $persentase, 'label' => $label, 'data' => $data, 'phone' => decrypt($siswa->phone), 'ortu' => decrypt($siswa->phone_ortu)]);
     }
+
     public function rombelsiswa($nis)
     {
         $ta = TahunAjaran::where('active', '=', 1)->first();
@@ -165,14 +205,28 @@ class AdminRouteController extends Controller
 
     public function presensi()
     {
-        return Inertia::render('Admin/Presensi');
+        $tahun = TahunAjaran::where('active', '=', 1)->first();
+        $tingkat = Tingkat::all();
+        $jenjang = Jenjang::all();
+        $total = Absensi::whereHas('pertemuan.rombel.tahun', function ($query) {
+            $query->where('active', '=', 1);
+        })->count();
+        $persentase = ($total / 1000000) * 100;
+        return Inertia::render('Admin/Presensi', ['tahun' => $tahun, 'tingkat' => $tingkat, 'jenjang' => $jenjang, 'total' => $total, 'persentase' => $persentase]);
     }
+
     public function nilai()
     {
-        $tahun = TahunAjaran::get();
+        $tahun = TahunAjaran::where('active', '=', 1)->first();
         $tingkat = Tingkat::get();
         $jenjang = Jenjang::get();
-        return Inertia::render('Admin/Nilai', ['tahun' => $tahun, 'tingkat' => $tingkat, 'jenjang' => $jenjang]);
+        $nilai = Nilai::whereHas('absensi.pertemuan.rombel.tahun', function ($query) use ($tahun) {
+            $query->where('id', '=', $tahun->id);
+        });
+        $min = $nilai->min('nilai');
+        $max = $nilai->max('nilai');
+        $avg = $nilai->avg('nilai');
+        return Inertia::render('Admin/Nilai', ['tahun' => $tahun, 'tingkat' => $tingkat, 'jenjang' => $jenjang, 'min' => $min, 'max' => $max, 'avg' => $avg]);
     }
 
     public function tingkat()
@@ -194,15 +248,16 @@ class AdminRouteController extends Controller
         });
         return Inertia::render('Admin/Kelas', ['tingkat' => $tingkat, 'jenjang' => $jenjang, 'kelas' => $jumlah, 'label' => $label, 'data' => $data]);
     }
-    public function kelasDetail($slug){
+    public function kelasDetail($slug)
+    {
         $kelas = Kelas::where('slug', '=', $slug)->first();
-        if(!$kelas){
+        if (!$kelas) {
             abort(404, 'Kelas tidak ditemukan');
         }
         $ta = TahunAjaran::where('active', '=', 1)->first();
         return Inertia::render('Admin/KelasDetail', ['kelas' => $kelas, 'ta' => $ta]);
     }
-    
+
     public function rombel()
     {
         $ta = TahunAjaran::where('active', '=', 1)->first();

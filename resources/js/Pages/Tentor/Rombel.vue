@@ -5,14 +5,17 @@ import { Head } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { eror } from '@/Helper.js/Toast';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Card from '@/Components/Tentor/Rombel/Card.vue';
 import PaginationCard from '@/Components/PaginationCard.vue';
 import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
+import Search from '@/Components/21Dev/Search.vue';
 
 const user = usePage().props?.auth?.user;
-const props = defineProps(['ta']);
+const props = defineProps(['ta', 'tingkats']);
 const loading = ref(false);
+const search = ref('');
+const tingkat = ref('');
 const rombels = ref([]);
 const links = ref({});
 async function get(page = 1) {
@@ -20,7 +23,9 @@ async function get(page = 1) {
         loading.value = true;
         const response = await axios.get('/api/Tentor/rombel', {
             params: {
-                page: page
+                page: page,
+                search: search.value,
+                tingkat: tingkat.value
             }
         });
         rombels.value = response?.data?.data ?? []
@@ -46,6 +51,16 @@ function handlepage(page){
         get(page);
     }
 }
+watch((search), (newsearch)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+}, {immediate:true})
+watch((tingkat), (newtingkat)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+}, {immediate:true})
 onMounted(()=>{
     get()
 })
@@ -93,9 +108,13 @@ onMounted(()=>{
         </section>
 
         <section class="my-5">
-            <div class="p-3 shadow-sm bg-white flex items-center justify-end my-5">
-                <select name="" id="" class="rounded-lg border-0 ring-1 ring-slate-500">
-                    <option value="">Filter Tingkat</option>
+            <div class="p-3 shadow-sm bg-white flex items-center justify-between md:justify-end my-5">
+                <div class="md:hidden">
+                    <Search v-model="search" placeholder="Cari rombel..." />
+                </div>
+                <select name="" id="" v-model="tingkat" class="rounded-lg border-0 ring-1 ring-slate-500">
+                    <option disabled selected value="">Filter Tingkat</option>
+                    <option v-for="tingkat in props?.tingkats" :key="tingkat?.id" :value="tingkat.id">{{ tingkat?.tingkat }}</option>
                 </select>
             </div>
 

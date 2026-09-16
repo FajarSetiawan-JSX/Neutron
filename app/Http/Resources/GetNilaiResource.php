@@ -16,12 +16,12 @@ class GetNilaiResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'nama' => $this->absensi->pertemuan->siswa->siswa->nama,
-            'mapel' => $this->absensi->pertemuan->rombel->subjek->mapel->nama,
+            'nama' => $this->absensi->siswa->siswa->nama,
+            'mapel' => $this->absensi->pertemuan->rombel->subjek->mapel->singkatan,
             'pertemuan' => $this->absensi->pertemuan->pertemuan,
             'jenis' => $this->ujian->nama,
             'nilai' => $this->nilai,
-            'ta' => $this->absensi->pertemuan->rombel->tahun->tahun,
+            'catatan' => $this->catatan ?? '',
             'tanggal' => $this->created_at
         ];
     }

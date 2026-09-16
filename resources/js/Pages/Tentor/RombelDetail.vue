@@ -96,13 +96,10 @@ onMounted(()=>{
                     ☰
                 </button>
                 <h1 class="text-xl font-bold text-white">
-                    Rombel Detai
+                    Rombel Detail
                 </h1>
             </div>
-            <div class="flex-1 max-w-md mx-8 hidden md:block">
-                <AnimatedGlowingSearchBar v-model="search" />
-                <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
-            </div>
+            
             <div class="flex items-center gap-3">
                 <button class="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-500 hover:text-white transition">
                     🔔

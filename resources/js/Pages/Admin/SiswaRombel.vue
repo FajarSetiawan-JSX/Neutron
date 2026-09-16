@@ -2,7 +2,7 @@
 import AnimatedGlowingSearchBar from '@/Components/21Dev/AnimatedGlowingSearchBar.vue';
 import Auth from '@/Layouts/Auth.vue';
 import { Head } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { ChevronRight, Plus } from "lucide-vue-next";
 import Search from '@/Components/21Dev/Search.vue';
@@ -77,6 +77,11 @@ function handlesuccesdelete(){
     data.value = {};
     get();
 }
+watch((search), (newsearch)=>{
+    setTimeout(()=>{
+        get()
+    },1000);
+},{immediate:true});
 onMounted(()=>{
     get()
 })
@@ -126,8 +131,8 @@ onMounted(()=>{
         </section>
 
         <section>
-            <div class="md:flex md:items-center md:justify-between grid grid-cols-1 gap-2.5 p-3 border-1 border-slate-100 bg-white shadow-md">
-                <div>
+            <div class="grid grid-cols-2 md:grid-cols-1 gap-2.5 p-3 border-1 border-slate-100 bg-white shadow-md">
+                <div class="block md:hidden">
                     <Search v-model="search" placeholder="Cari siswa..." />
                 </div>
                 <div class="flex items-center justify-end gap-x-3">

@@ -18,7 +18,7 @@ class GetAbsensiResource extends JsonResource
             'id' => $this->id,
             'nama' => $this->siswa->siswa->nama,
             'nis' => $this->siswa->siswa->nis,
-            'kelas' => $this->siswa->siswa->kelasSekarang,
+            'kelas' => $this->siswa->siswa->kelasSekarang->kelas->nama,
             'mapel' => $this->pertemuan->rombel->subjek->mapel->singkatan ?? $this->pertemuan->rombel->subjek->mapel->nama,
             'tipe' => $this->pertemuan->tipe->nama,
             'tanggal' => $this->created_at

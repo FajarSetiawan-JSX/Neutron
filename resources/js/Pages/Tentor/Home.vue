@@ -232,7 +232,7 @@ onMounted(()=>{
                         <p class="text-sm text-slate-500">Pantau jadwal, kelas, dan aktivitas mengajarmu dengan mudah.</p>
                         <p class="mt-5 text-md text-white px-3 py-1 rounded-full bg-black max-w-max flex items-center justify-start gap-x-1">Tahun Ajaran {{ props?.ta?.tahun }} <CircleCheckBig class="text-red-500" /> </p>
                     </div>
-                    <div class="flex items-center justify-between flex-wrap gap-x-2 max-w-sm">
+                    <div class="flex items-center justify-between flex-wrap gap-x-2 md:w-sm">
                         <div>
                             <h2 class="font-semibold text-2xl text-red-500 text-center">{{ totalsiswakelas.count }}</h2>
                             <p class="text-slate-500 text-xs">siswa wali</p>

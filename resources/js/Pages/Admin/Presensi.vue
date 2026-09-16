@@ -5,7 +5,7 @@ import AnimatedGlowingSearchBar from '@/Components/21Dev/AnimatedGlowingSearchBa
 import { usePage } from '@inertiajs/vue3';
 import { Bar } from "vue-chartjs";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend, } from "chart.js";
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Globe, Info, Trash2 } from "lucide-vue-next";
 import GradientButton from '@/Components/21Dev/GradientButton.vue';
 import PaginationCard from '@/Components/PaginationCard.vue';
@@ -14,6 +14,7 @@ import { eror, success } from '@/Helper.js/Toast';
 import axios from 'axios';
 import { formatDate } from '@/Helper.js/DateTime';
 import Delete from '@/Components/Admin/Absensi/Delete.vue';
+import { useCounter } from '@/Helper.js/counter';
 
 const hadir = [212,331,323,223,129,299,340];
 const tidak = [10,25,30,19,22,33,12];
@@ -64,6 +65,13 @@ const options = {
 ChartJS.register( CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const user = usePage().props?.auth?.user;
+const props = defineProps(['tahun', 'jenjang', 'tingkat', 'total', 'persentase']);
+const counttotal = useCounter();
+const countpersen = useCounter();
+const w = ref(0);
+const search = ref('');
+const jenjang = ref('');
+const tingkat = ref('');
 const openMenu = ref(null);
 const modaldelete = ref(false);
 const absens = ref([]);
@@ -72,7 +80,14 @@ const loading = ref(false);
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get('/api/Admin/absensi');
+        const response = await axios.get('/api/Admin/absensi', {
+            params: {
+                page: page,
+                search: search.value,
+                jenjang: jenjang.value,
+                tingkat: tingkat.value
+            }
+        });
         console.log(response.data);
         absens.value = response?.data?.data;
         links.value = response?.data?.meta;
@@ -108,8 +123,34 @@ function handlesuccessdelete(){
     modaldelete.value = false;
     get();
 }
+watch((search), (newsearch)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+},{immediate:true});
+watch((jenjang), (newjenjang)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+},{immediate:true});
+watch((tingkat), (newtingkat)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+},{immediate:true});
 onMounted(()=>{
     get();
+    counttotal.start(props?.total);
+    countpersen.start(Number(props?.persentase).toFixed(4));
+    const target = Math.round(props?.persentase);
+
+    const hitung = setInterval(()=>{
+        w.value += 1;
+        if(w.value >= target){
+            w.value = target;
+            clearInterval(hitung);
+        }
+    }, 20);
     document.addEventListener('click', closeMenu);
     setTimeout(() => {
         data.value = {
@@ -148,7 +189,7 @@ onBeforeUnmount(() => {
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">
@@ -167,7 +208,7 @@ onBeforeUnmount(() => {
         </template>
         <section class="grid grid-cols-1 xl:grid-cols-5 gap-5">
             <div class="p-5 rounded-lg shadow-lg hover:bg-slate-100/50 hover:shadow-2xl transition-all duration-800 xl:col-span-4">
-                <h1 class="font-primary font-semibold text-black">Global Presensi </h1>
+                <h1 class="font-primary font-semibold text-black">Global Presensi TA {{ props?.tahun?.tahun }}</h1>
                 <h2 class="font-anonymous">Laporan 7 hari terakhir</h2>
                 <Bar :data="data" :options="options" class="max-h-80" />
             </div>
@@ -180,13 +221,15 @@ onBeforeUnmount(() => {
                             </div>
                             <div>
                                 <h3 class="font-primary text-black text-lg">Total Global</h3>
-                                <p class="font-anonymous text-slate-500 text-sm">7 presensi</p>
+                                <p class="font-anonymous text-slate-500 text-sm">{{ counttotal.count }} presensi</p>
                             </div>
                         </div>
                         <div class="w-full">
                             <p class="text-sm font-primary text-slate-400">Maksimal 1.000.000 presensi</p>
-                            <div class="bg-emerald-500 h-1 rounded-full my-1.5" />
-                            <p class="font-anonymous text-black text-sm">100% mencapai batas maksimal</p>
+                            <div class="w-full rounded-full bg-slate-200">
+                                <div :style="{width: `${w}%`}" class="bg-red-500 h-1 rounded-full my-1.5" />
+                            </div>
+                            <p class="font-anonymous text-black text-sm">{{ countpersen.count }}% mencapai batas maksimal</p>
                         </div>
                     </div>
                 </div>
@@ -213,26 +256,21 @@ onBeforeUnmount(() => {
         <section class="my-3.5 relative overflow-visible">
             <div class="flex items-center justify-between flex-wrap bg-white p-3 rounded-t-lg">
                 <div class="flex items-center justify-start gap-x-3">
-                    <select name="" id="" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
-                        <option selected value="">Filter Kelas</option>
+                    <select name="" id="" v-model="tingkat" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
+                        <option selected disabled value="">Filter Tingkat</option>
+                        <option v-for="tingkat in props?.tingkat" :key="tingkat?.id" :value="tingkat?.id">{{ tingkat?.tingkat }}</option>
                     </select>
-                    <select name="" id="" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
-                        <option selected value="">Filter Tingkat</option>
-                    </select>
-                    <select name="" id="" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
-                        <option selected value="">Filter Jenjang</option>
+                    <select name="" id="" v-model="jenjang" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
+                        <option selected disabled value="">Filter Jenjang</option>
+                        <option v-for="jenjang in props?.jenjang" :key="jenjang?.id" :value="jenjang?.id">{{ jenjang?.slug }}</option>
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-x-3">
-                    <select name="" id="" class="pl-2 py-1 rounded-lg bg-white border-0 ring-1 ring-slate-300 focus:ring-2 focus:ring-sky-300">
-                        <option selected value="">Pilih TA</option>
-                    </select>
-                    <GradientButton color="red" type="button" class="px-3 py-1 rounded-lg text-white flex items-center gap-x-2">
+                    <GradientButton color="red" type="button" @click="modaldelete = true" class="px-3 py-1 rounded-lg text-white flex items-center gap-x-2">
                         <Trash2 size="20" />
                         Hapus semua presensi
                     </GradientButton>
                 </div>
-                
             </div>
             <div class="overflow-x-scroll bg-white mb-4">
                 <table class="w-full text-sm text-left text-gray-500">
@@ -271,7 +309,7 @@ onBeforeUnmount(() => {
                                     <td class="px-4 py-3">{{ siswa?.kelas }}</td>
                                     <td class="px-4 py-3">{{ siswa?.tipe }}</td>
                                     <td class="px-4 py-3">{{ formatDate(siswa?.tanggal) }}</td>
-                                    <td class="px-4 py-3 flex items-center justify-end relative">
+                                    <!-- <td class="px-4 py-3 flex items-center justify-end relative">
                                         <button @click.stop="toggleMenu(siswa.id)" class="inline-flex items-center text-sm font-medium hover:bg-gray-100 p-1.5 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none" type="button">
                                             <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -290,12 +328,12 @@ onBeforeUnmount(() => {
                                                 </li>
                                             </ul>
                                         </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </template>
                             <template v-else>
                                 <tr>
-                                    <td colspan="8">
+                                    <td colspan="7">
                                         <h1 class="my-5 font-anonymous text-red-500 text-center">Tidak ada kehadiran siswa</h1>
                                     </td>
                                 </tr>
@@ -306,6 +344,6 @@ onBeforeUnmount(() => {
             </div>
             <PaginationCard :links="links" :name="'Kehadiran'" @next="handlenextpage" @page="handlepage" @prev="handleprevpage" />
         </section>
-        <Delete v-if="modaldelete" @close="modaldelete = false" @success="handlesuccessdelete" />
+        <Delete v-if="modaldelete" @close="modaldelete = false" @success="handlesuccessdelete" :ta="props?.tahun" />
     </Auth>
 </template>

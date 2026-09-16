@@ -5,14 +5,15 @@ import { Head } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { eror } from '@/Helper.js/Toast';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import PaginationCard from '@/Components/PaginationCard.vue';
 import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
 import { ChevronRight } from "lucide-vue-next";
+import Search from '@/Components/21Dev/Search.vue';
 
 const user = usePage().props?.auth?.user;
 const isOpen = ref(false);
-const modalcreate = ref(false);
+const search = ref('');
 const props = defineProps(['rombel']);
 const loading = ref(false);
 const siswas = ref([]);
@@ -27,10 +28,10 @@ async function get(page = 1) {
         loading.value = true;
         const response = await axios.get(`/api/Tentor/rombel/${props?.rombel?.id}`, {
             params: {
-                page: page
+                page: page,
+                search: search.value
             }
         });
-        console.log(response?.data?.data);
         siswas.value = response?.data?.data ?? []
         links.value = response?.data?.meta ?? {};
     }catch(error){
@@ -57,6 +58,11 @@ function handlepage(page){
 function closeMenu() {
     openMenu.value = null;
 }
+watch((search), (newsearch)=>{
+    setTimeout(()=>{
+        get()
+    }, 1000)
+}, {immediate:true})
 onMounted(()=>{
     document.addEventListener('click', closeMenu);
     get()
@@ -79,7 +85,7 @@ onBeforeUnmount(() => {
                     ☰
                 </button>
                 <h1 class="text-xl font-bold text-white">
-                    Rombel Detai Siswa
+                    Rombel Detail Siswa
                 </h1>
             </div>
             <div class="flex items-center gap-3">
@@ -107,7 +113,7 @@ onBeforeUnmount(() => {
 
         <section class="my-5">
             <div class="p-3 shadow-sm bg-white flex items-center justify-between gap-x-3 my-5">
-                
+                <Search v-model="search" placeholder="Cari siswa..." />
             </div>
             <div class="max-w-screen-xl">
                 <div class="bg-white relative shadow-md sm:rounded-lg overflow-hidden">
@@ -127,9 +133,9 @@ onBeforeUnmount(() => {
                                     <th scope="col" class="px-4 py-3">Nis</th>
                                     <th scope="col" class="px-4 py-3">Sekolah</th>
                                     <th scope="col" class="px-4 py-3">Kelas Asal</th>
-                                    <th scope="col" class="px-4 py-3">
+                                    <!-- <th scope="col" class="px-4 py-3">
                                         <span class="sr-only">Actions</span>
-                                    </th>
+                                    </th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -151,7 +157,7 @@ onBeforeUnmount(() => {
                                             <td class="px-4 py-3">{{ siswa?.nis }}</td>
                                             <td class="px-4 py-3 max-w-[12rem] truncate">{{ siswa?.sekolah }}</td>
                                             <td class="px-4 py-3">{{ siswa?.kelas }}</td>
-                                            <td class="px-4 py-3 flex items-center justify-end relative">
+                                            <!-- <td class="px-4 py-3 flex items-center justify-end relative">
                                                 <button @click.stop="toggleMenu(siswa.id)" class="inline-flex items-center text-sm font-medium hover:bg-gray-100 p-1.5 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none" type="button">
                                                     <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -170,12 +176,12 @@ onBeforeUnmount(() => {
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </td>
+                                            </td> -->
                                         </tr>
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="6">
+                                            <td colspan="">
                                                 <h1 class="my-5 font-anonymous text-red-500 text-center">Tidak ada siswa</h1>
                                             </td>
                                         </tr>

@@ -12,6 +12,7 @@ use App\Models\Rombel;
 use App\Models\RombelSiswa;
 use App\Models\Siswa;
 use App\Models\TahunAjaran;
+use App\Models\Tingkat;
 use App\Models\Tipe;
 use App\Models\Ujian;
 use Illuminate\Http\Request;
@@ -69,7 +70,8 @@ class TentorRouteController extends Controller
 
     public function kelas()
     {
-        return Inertia::render('Tentor/Kelas');
+        $tingkat = Tingkat::all();
+        return Inertia::render('Tentor/Kelas', ['tingkats' => $tingkat]);
     }
 
     public function kelasdetail($id)
@@ -87,7 +89,8 @@ class TentorRouteController extends Controller
     public function rombel()
     {
         $ta = TahunAjaran::where('active', '=', 1)->first();
-        return Inertia::render('Tentor/Rombel', ['ta' => $ta]);
+        $tingkats = Tingkat::all();
+        return Inertia::render('Tentor/Rombel', ['ta' => $ta, 'tingkats' => $tingkats]);
     }
 
     public function rombeldetail($id)

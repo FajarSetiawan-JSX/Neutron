@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'store']);
 
 Route::middleware(['auth:sanctum', 'admin'])->prefix('Admin')->group(function () {
+    Route::post('/download/{id}', [SiswaController::class, 'download']);
+
     Route::get('/alumnis', [AlumniController::class, 'index']);
     Route::post('/alumni', [AlumniController::class, 'store']);
     Route::get('/calonalumni', [AlumniController::class, 'calon']);
@@ -57,6 +59,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('Admin')->group(function ()
 
     Route::get('/siswas', [SiswaController::class, 'index']);
     Route::post('/siswa', [SiswaController::class, 'store']);
+    Route::get('/siswa/{id}', [SiswaController::class, 'recap']);
     Route::patch('/siswa/{id}', [SiswaController::class, 'update']);
     Route::delete('/siswa/{id}', [SiswaController::class, 'destroy']);
     Route::post('/siswa/kelas', [SiswaController::class, 'kelas']);
@@ -77,10 +80,9 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('Admin')->group(function ()
     Route::get('/tingkat', [TingkatController::class, 'index']);
 
     Route::get('/absensi', [AbsensiController::class, 'index']);
-    Route::delete('/absensi/{ta}', [AbsensiController::class, 'delete']);
+    Route::delete('/absensi/{ta}', [AbsensiController::class, 'destroy']);
 
     Route::get('/nilai', [NilaiController::class, 'index']);
-    Route::delete('/nilai/{id}', [NilaiController::class, 'delete']);
 
     Route::patch('/siswa/status/{id}', [SiswaController::class, 'status']);
     Route::get('/siswa/{id}/rombel/{tahun}', [SiswaController::class, 'rombel']);
@@ -90,15 +92,18 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('Admin')->group(function ()
 
 Route::middleware(['auth:sanctum', 'tentor'])->prefix('Tentor')->group(function () {
     Route::get('/rombel', [RombelController::class, 'tentorindex']);
+    Route::get('/download/{id}', [SiswaController::class, 'download']);
     Route::post('/absen/pertemuan', [AbsensiController::class, 'store']);
     Route::post('/nilai/pertemuan', [NilaiController::class, 'store']);
     Route::post('/absen/tambahan', [AbsensiController::class, 'tambahan']);
     Route::get('/kelases/{id}', [KelasController::class, 'bytentor']);
     Route::get('/rombel/{id}', [RombelController::class, 'getsiswa']);
+    Route::get('/siswa/{id}', [SiswaController::class, 'recap']);
 
     Route::patch('/pertemuan/{id}', [PertemuanController::class, 'update']);
     Route::get('/{rombel}/pertemuans', [PertemuanController::class, 'index']);
     Route::post('/{rombel}/pertemuan', [PertemuanController::class, 'store']);
+    Route::get('/pertemuan/{id}/detail', [PertemuanController::class, 'show']);
     //Route::patch('/kelas/{id}', [KelasController::class, 'update']);
     //Route::delete('/kelas/{id}', [KelasController::class, 'destroy']);
     Route::get('/kelas/{id}/siswa/{ta}', [SiswaController::class, 'getbytentor']);
