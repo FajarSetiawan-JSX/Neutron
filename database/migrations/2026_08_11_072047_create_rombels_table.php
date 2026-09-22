@@ -18,15 +18,15 @@ return new class extends Migration
             $table->foreignId('tingkat_id')->constrained(
                 table: 'tingkats',
                 indexName: 'tingkats_rombel_id'
-            );
-            $table->foreignId('subjek_id')->constrained(
+            )->cascadeOnDelete();
+            $table->foreignId('subjek_id')->nullable()->constrained(
                 table: 'subjek_tentors',
                 indexName: 'subjeks_rombel_id'
-            );
+            )->nullOnDelete();
             $table->foreignId('tahun_id')->constrained(
                 table: 'tahun_ajarans',
                 indexName: 'tahuns_rombel_id'
-            );
+            )->cascadeOnDelete();
             $table->string('deskripsi', 200)->nullable();
             $table->timestamps();
         });

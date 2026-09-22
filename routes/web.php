@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('Admin')->group(functio
     Route::get('/siswa/{nis}', [AdminRouteController::class, 'informasi'])->name('admin.siswa.detail');
     Route::get('/tentor/{slug}', [AdminRouteController::class, 'tentorrombel'])->name('admin.tentor.rombel');
     Route::get('/siswa/rombel/{nis}', [AdminRouteController::class, 'rombelsiswa'])->name('admin.siswa.rombel');
+    Route::get('/rombel/{id}/pengajar', [AdminRouteController::class, 'rombeleditpengajar'])->name('admin.rombel.pengajar');
 });
 
 

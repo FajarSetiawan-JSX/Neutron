@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('rombel_id')->constrained(
                 table: 'rombels',
                 indexName: 'rombel_siswas_rombel_id'
-            );
+            )->cascadeOnDelete();
             $table->foreignId('siswa_id')->constrained(
                 table: 'siswas',
                 indexName: 'rombel_siswas_siswa_id'

@@ -19,8 +19,8 @@ const closeMenu = (e) => {
 };
 
 onMounted(() => {
-    siswa.start(props?.mapel?.siswa, 200);
-    total.start(props?.mapel?.total, 100);
+    siswa.start(props?.mapel?.siswa, 10);
+    total.start(props?.mapel?.total, 10);
     document.addEventListener("click", closeMenu);
 });
 

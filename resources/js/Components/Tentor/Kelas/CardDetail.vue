@@ -77,20 +77,20 @@ onBeforeUnmount(() => {
                     <MoreVertical class="h-5 w-5" />
                 </button>
                 <div v-if="showMenu" class="absolute right-0 top-full z-50 mt-1 w-40 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
-                    <button type="button" @click="showMenu = false" class="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50">
+                    <!-- <button type="button" @click="showMenu = false" class="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50">
                         <Eye class="h-4 w-4 text-slate-500" />
                         <span>Detail</span>
-                    </button>
+                    </button> -->
 
                     <button type="button" @click="download" class="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50">
                         <Download class="h-4 w-4 text-slate-500" />
                         <span>Unduh</span>
                     </button>
 
-                    <button type="button" class="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50" @click="showMenu = false">
+                    <!-- <button type="button" class="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50" @click="showMenu = false">
                         <PhoneCall class="h-4 w-4 text-slate-500" />
                         <span>Kirim</span>
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>

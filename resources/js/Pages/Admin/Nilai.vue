@@ -39,8 +39,8 @@ async function get(page = 1) {
                 tahun: tahun.value
             }
         });
-        nilais.value = response?.data?.data;
-        links.value = response?.data?.meta;
+        nilais.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{

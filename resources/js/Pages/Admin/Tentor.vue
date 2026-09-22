@@ -99,8 +99,8 @@ async function get(page = 1) {
                 search: search.value
             }
         });
-        tentors.value = response?.data?.data;
-        links.value = response?.data?.meta;
+        tentors.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{

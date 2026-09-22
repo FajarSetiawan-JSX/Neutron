@@ -184,7 +184,7 @@ class TentorController extends Controller
             }
             DB::commit();
             if (!empty($valid['mapel'])) {
-                return response()->json(['message' => 'Berhasil menguatur mapel 🫡']);
+                return response()->json(['message' => 'Berhasil mengatur mapel 🫡']);
             } else {
                 return response()->json(['message' => 'Berhasil melepas mapel dari tentor 🥲']);
             }

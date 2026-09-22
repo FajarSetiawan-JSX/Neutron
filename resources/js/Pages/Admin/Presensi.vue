@@ -16,19 +16,20 @@ import { formatDate } from '@/Helper.js/DateTime';
 import Delete from '@/Components/Admin/Absensi/Delete.vue';
 import { useCounter } from '@/Helper.js/counter';
 
-const hadir = [212,331,323,223,129,299,340];
-const tidak = [10,25,30,19,22,33,12];
+const user = usePage().props?.auth?.user;
+const props = defineProps(['tahun', 'jenjang', 'tingkat', 'total', 'persentase', 'hari', 'hadir', 'tidak']);
+
 const data = ref({
-    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    labels: props?.hari,
     datasets: [
         {
         label: 'Hadir',
-        data: [20, 15, 18],
+        data: [],
         backgroundColor: '#22c55e',
         },
         {
         label: 'Tidak Hadir',
-        data: [12, 19, 14],
+        data: [],
         backgroundColor: '#ef4444',
         }
     ]
@@ -64,8 +65,7 @@ const options = {
 };
 ChartJS.register( CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
-const user = usePage().props?.auth?.user;
-const props = defineProps(['tahun', 'jenjang', 'tingkat', 'total', 'persentase']);
+
 const counttotal = useCounter();
 const countpersen = useCounter();
 const w = ref(0);
@@ -89,8 +89,8 @@ async function get(page = 1) {
             }
         });
         console.log(response.data);
-        absens.value = response?.data?.data;
-        links.value = response?.data?.meta;
+        absens.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
         console.log(error.response);
@@ -158,11 +158,11 @@ onMounted(()=>{
             datasets: [
                 {
                     ...data.value.datasets[0],
-                    data: hadir,
+                    data: props?.hadir,
                 },
                 {
                     ...data.value.datasets[1],
-                    data: tidak,
+                    data: props?.tidak,
                 },
             ],
         };

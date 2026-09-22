@@ -100,8 +100,8 @@ async function get(page = 1) {
                 search: search.value
             }
         });
-        mapels.value = response?.data?.data;
-        links.value = response?.data?.meta;
+        mapels.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.statusText);
     }finally{
@@ -192,7 +192,7 @@ onMounted(() => {
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
             </div>
             <div class="flex items-center gap-3">
                 <button class="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-500 hover:text-white transition">

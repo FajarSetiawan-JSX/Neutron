@@ -6,7 +6,7 @@ import { usePage } from '@inertiajs/vue3';
 import Card from '@/Components/Admin/Kelas/Card.vue';
 import { Pie } from "vue-chartjs";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import GradientButton from '@/Components/21Dev/GradientButton.vue';
 import { Plus } from "lucide-vue-next";
 import Create from '@/Components/Admin/Kelas/Create.vue';
@@ -21,6 +21,7 @@ const props = defineProps(['label', 'data', 'tingkat', 'jenjang', 'kelas']);
 const modalcreate = ref(false);
 const modalupdate = ref(false);
 const modaldelete = ref(false);
+const search = ref('');
 const loading = ref(false);
 const kelases = ref({});
 const links = ref({});
@@ -78,11 +79,12 @@ async function get(page = 1) {
         loading.value = true
         const response = await axios.get('/api/Admin/kelases', {
             params:{
-                page:page
+                page:page,
+                search: search.value
             }
         })
-        kelases.value = response?.data?.data;
-        links.value = response?.data?.meta;
+        kelases.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{
@@ -133,7 +135,13 @@ function handlesuccesdelete(){
     get();
 }
 // penutup function emit
-
+watch(()=>search.value, (newsearch)=>{
+    if(newsearch){
+        setTimeout(()=>{
+            get()
+        }, 500)
+    }
+},{immediate:true});
 onMounted(()=>{
     get()
     setTimeout(() => {
@@ -166,7 +174,7 @@ onMounted(()=>{
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">

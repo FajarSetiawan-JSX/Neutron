@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('sekolah');
             $table->string('alamat')->nullable();
             $table->text('phone');
-            $table->string('phone_hash', 64)->unique();
+            $table->string('phone_hash', 64)->index();
             $table->text('phone_ortu');
-            $table->string('phone_ortu_hash', 64)->unique();
+            $table->string('phone_ortu_hash', 64)->index();
             $table->boolean('status')->default(true);
             $table->boolean('lulus')->default(false);
             $table->timestamps();

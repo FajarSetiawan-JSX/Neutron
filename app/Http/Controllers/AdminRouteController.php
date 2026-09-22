@@ -15,6 +15,7 @@ use App\Models\TahunAjaran;
 use App\Models\Tingkat;
 use App\Models\Ujian;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -81,7 +82,7 @@ class AdminRouteController extends Controller
 
     public function tentorrombelsiswa($id)
     {
-        $rombel = Rombel::where('id', '=', $id)->with(['tingkat', 'subjek.tentor', 'subjek.mapel', 'tingkat', 'siswa', 'tahun'])->first();
+        $rombel = Rombel::where('id', '=', $id)->with(['tingkat', 'subjek.tentor', 'subjek.mapel', 'tingkat', 'siswa', 'tahun', 'pertemuan'])->first();
         return Inertia::render('Admin/RombelSiswa', ['rombel' => $rombel]);
     }
     public function mapel()
@@ -139,7 +140,14 @@ class AdminRouteController extends Controller
         foreach ($siswaPerBulan as $bulan => $total) {
             $data[$bulan - 1] = $total;
         }
-        return Inertia::render('Admin/Siswa', ['jenjangs' => $jenjang, 'tingkats' => $tingkat, 'kelases' => $kelas, 'ta' => $TA, 'sd' => $sd, 'smp' => $smp, 'sma' => $sma, 'mapels' => $mapel, 'data' => $data, 'tahun' => $tahun]);
+        $off = Siswa::where('status', '=', 0)->where('lulus', '=', 1)->count();
+        $nokelas = Siswa::whereDoesntHave('kelas.tahun', function ($s) use ($TA) {
+            $s->where('id', '=', $TA->id);
+        })->count();
+        $nomapel = Siswa::whereDoesntHave('kelas.tahun', function ($s) use ($TA) {
+            $s->where('id', '=', $TA->id);
+        })->whereDoesntHave('mapel')->count();
+        return Inertia::render('Admin/Siswa', ['jenjangs' => $jenjang, 'tingkats' => $tingkat, 'kelases' => $kelas, 'ta' => $TA, 'sd' => $sd, 'smp' => $smp, 'sma' => $sma, 'mapels' => $mapel, 'data' => $data, 'tahun' => $tahun, 'off' => $off, 'noklas' => $nokelas, 'nomapel' => $nomapel]);
     }
 
     public function informasi($nis)
@@ -203,6 +211,28 @@ class AdminRouteController extends Controller
         return Inertia::render('Admin/SiswaRombel', ['ta' => $ta, 'siswa' => $siswa, 'kelassiswa' => $kelas]);
     }
 
+    public function rombeleditpengajar($id)
+    {
+        $rombel = Rombel::where('id', '=', $id)->with(['tahun', 'tingkat', 'subjek.tentor'])->first();
+        if (!$rombel) {
+            abort(404, 'Rombel tidak ditemukan');
+        }
+        $tentor = User::where('role_id', '=', 2)->with(['mapel.mapel'])->get();
+        $result = $tentor->map(function ($t) {
+            return [
+                'id' => $t->id,
+                'nama' => $t->name,
+                'subjek' => $t->mapel?->map(function ($m) {
+                    return [
+                        'id' => $m->id,
+                        'mapel' => $m->mapel->nama,
+                    ];
+                })
+            ];
+        });
+        return Inertia::render('Admin/RombelEdit', ['rombel' => $rombel, 'tentors' => $result]);
+    }
+
     public function presensi()
     {
         $tahun = TahunAjaran::where('active', '=', 1)->first();
@@ -212,7 +242,31 @@ class AdminRouteController extends Controller
             $query->where('active', '=', 1);
         })->count();
         $persentase = ($total / 1000000) * 100;
-        return Inertia::render('Admin/Presensi', ['tahun' => $tahun, 'tingkat' => $tingkat, 'jenjang' => $jenjang, 'total' => $total, 'persentase' => $persentase]);
+        $day = [];
+        $h = [];
+        $t = [];
+        $pertemuans = Pertemuan::where('tipe_id', '=', 1)->whereHas('rombel.tahun', function ($q) use ($tahun) {
+            $q->where('id', '=', $tahun->id);
+        })->whereBetween('created_at', [Carbon::now()->subDays(6)->startOfDay(), Carbon::now()->endOfDay()])->with(['absensi', 'rombel.siswa'])->get();
+        Carbon::setLocale('id');
+        for ($i = 6; $i >= 0; $i--) {
+            $tanggal = Carbon::now()->subDays($i);
+            $day[] = $tanggal->translatedFormat('l, d M');
+            $hadir = 0;
+            $tidak = 0;
+            $pertemuanHariIni = $pertemuans->filter(function ($pertemuan) use ($tanggal) {
+                return $pertemuan->created_at->isSameDay($tanggal);
+            });
+            foreach ($pertemuanHariIni as $pertemuan) {
+                $jumlahHadir = $pertemuan->absensi->count();
+                $jumlahSiswa = $pertemuan->rombel->siswa->count();
+                $hadir += $jumlahHadir;
+                $tidak += $jumlahSiswa - $jumlahHadir;
+            }
+            $h[] = $hadir;
+            $t[] = $tidak;
+        }
+        return Inertia::render('Admin/Presensi', ['tahun' => $tahun, 'tingkat' => $tingkat, 'jenjang' => $jenjang, 'total' => $total, 'persentase' => $persentase, 'hari' => $day, 'hadir' => $h, 'tidak' => $t]);
     }
 
     public function nilai()
@@ -261,7 +315,17 @@ class AdminRouteController extends Controller
     public function rombel()
     {
         $ta = TahunAjaran::where('active', '=', 1)->first();
-        return Inertia::render('Admin/Rombel', ['ta' => $ta]);
+        $mapels = Mapel::query()->get();
+        $rombels = Rombel::where('tahun_id', '=', $ta->id)->with('subjek.mapel');
+        $mapel = [];
+        $jumlah = [];
+        foreach ($mapels as $m) {
+            $mapel[] = $m->singkatan;
+            $jumlah[] = $rombels->whereHas('subjek.mapel', function ($r) use ($m) {
+                $r->where('id', '=', $m->id);
+            })->get()->count();
+        }
+        return Inertia::render('Admin/Rombel', ['ta' => $ta, 'mapel' => $mapel, 'jumlah' => $jumlah]);
     }
 
     public function alumni()

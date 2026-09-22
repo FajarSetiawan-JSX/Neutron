@@ -92,8 +92,8 @@ async function get(page = 1) {
         const response = await axios.get('/api/Admin/tahunajarans', {params: {
             page: page
         }})
-        datas.value = response?.data?.data;
-        links.value = response?.data?.meta;
+        datas.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message)
     }finally{

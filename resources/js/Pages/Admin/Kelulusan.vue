@@ -28,7 +28,7 @@ async function get(page = 1) {
             }
         });
         siswas.value = response?.data?.data ?? [];
-        links.value = response?.data?.meta;
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{

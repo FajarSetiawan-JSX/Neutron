@@ -76,7 +76,7 @@ const options = {
     },
 };
 ChartJS.register( CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-const props = defineProps(['tingkats', 'jenjangs', 'kelases', 'ta', 'sd', 'smp', 'sma', 'mapels', 'data', 'tahun']);
+const props = defineProps(['tingkats', 'jenjangs', 'kelases', 'ta', 'sd', 'smp', 'sma', 'mapels', 'data', 'tahun', 'off', 'noklas', 'nomapel']);
 const user = usePage().props?.auth?.user;
 const modalmenu = ref(false);
 const modalcreate = ref(false);
@@ -104,9 +104,8 @@ async function get(page = 1) {
                 kelas: kelas.value
             }
         })
-        siswas.value = response?.data?.data;
-        links.value = response?.data?.meta;
-        console.log(response.data);
+        siswas.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message)
     }finally{
@@ -325,9 +324,9 @@ watch(()=>kelas.value, (newkelas)=>{
                 </div>
                 <div class="font-primary">
                     <h1 class="text-slate-900 text-lg">Informasi penting</h1>
-                    <p class="my-1 text-sm text-slate-500 ml-1">Terdapat 5 siswa yang belum mengambil mata pelajaran apapun.</p>
-                    <p class="my-1 text-sm text-slate-500 ml-1">Terdapat 5 siswa yang belum memiliki kelas.</p>
-                    <p class="my-1 text-sm text-slate-500 ml-1">Terdapat 5 siswa yang berstatus off.</p>
+                    <p class="my-1 text-sm text-slate-500 ml-1">Terdapat {{ props?.nomapel }} siswa yang belum mengambil mata pelajaran apapun.</p>
+                    <p class="my-1 text-sm text-slate-500 ml-1">Terdapat {{ props?.noklas }} siswa yang belum memiliki kelas.</p>
+                    <p class="my-1 text-sm text-slate-500 ml-1">Terdapat {{ props?.off }} siswa yang berstatus off.</p>
                 </div>
             </div>
         </section>

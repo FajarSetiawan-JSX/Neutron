@@ -16,6 +16,10 @@ import { eror, success } from '@/Helper.js/Toast';
 import TerminalLoading from '@/Components/21Dev/TerminalLoading.vue';
 import BoxLoading3D from '@/Components/21Dev/BoxLoading3D.vue';
 import PaginationCard from '@/Components/PaginationCard.vue';
+import { watch } from 'vue';
+
+const user = usePage().props?.auth?.user;
+const props = defineProps(['ta', 'mapel', 'jumlah']);
 const colors = [
     "#ef4444", // merah
     "#3b82f6", // biru
@@ -28,15 +32,14 @@ const colors = [
     "#f97316", // orange
     "#84cc16", // lime
 ];
-const targetData = [302, 250, 370, 410, 227, 302, 250, 370, 410, 227, 330, 270];
 const backgroundColor = Array.from({ length: 12 }, () => {
     return colors[Math.floor(Math.random() * colors.length)];
 });
 const data = ref({
-    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"],
+    labels: props?.mapel,
     datasets: [
         {
-            data: [0, 0, 0, 0, 0],
+            data: [],
             label: 'Rombel',
             backgroundColor: backgroundColor,
             borderRadius: 8,
@@ -73,18 +76,21 @@ const options = {
     },
 };
 ChartJS.register( CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-const user = usePage().props?.auth?.user;
 const rombels = ref([]);
 const links = ref({});
 const loading = ref(false);
-
+const search = ref('');
 async function get(page = 1) {
     try{
         loading.value = true;
-        const response = await axios.get('/api/Admin/rombels');
-        rombels.value = response?.data?.data ?? []
-        links.value = response?.data?.meta;
-        console.log(response.data);
+        const response = await axios.get('/api/Admin/rombels', {
+            params: {
+                page: page,
+                search: search.value
+            }
+        });
+        rombels.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{
@@ -106,6 +112,13 @@ function handlepage(page){
         get(page);
     }
 }
+watch(()=>search.value, (newsearch)=>{
+    if(newsearch){
+        setTimeout(()=>{
+            get()
+        }, 500)
+    }
+},{immediate:true});
 onMounted(()=>{
     get()
     setTimeout(() => {
@@ -114,7 +127,7 @@ onMounted(()=>{
             datasets: [
                 {
                     ...data.value.datasets[0],
-                    data: targetData,
+                    data: props?.jumlah,
                 },
             ],
         };
@@ -138,7 +151,7 @@ onMounted(()=>{
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">
@@ -163,13 +176,13 @@ onMounted(()=>{
                 </div>
                 <span class="text-lg font-semibold">Grafik Jumlah Rombel</span>
             </div>
-            <h1 class="text-sm font-anonymous text-slate-400">Tahun Ajaran 2026 / 2027</h1>
+            <h1 class="text-sm font-anonymous text-slate-400">Tahun Ajaran {{ props?.ta?.tahun }}</h1>
             <div class="h-80 my-3">
                 <Bar :data="data" :options="options" class="h-80" />
             </div>
         </section>
 
-        <section class="my-5 grid grid-cols-1">
+        <!-- <section class="my-5 grid grid-cols-1">
             <div class="w-full rounded-xl shadow-xl max-h-max bg-red-500 max-w-max">
                 <div class="rounded-xl w-full bg-white ml-1 p-3 flex gap-x-3">
                     <div class="p-1.5 bg-red-200 rounded-xl">
@@ -181,9 +194,9 @@ onMounted(()=>{
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
-        <section class="my-5">
+        <!-- <section class="my-5">
             <h3 class="font-semibold text-xl font-primary">TOP 3 Pengajar</h3>
             <p class="text-xs mb-10">Pengajar dengan jumlah siswa rombel terbanyak pada Tahun Ajaran 2026/2027</p>
             <div class="my-5 grid grid-cols-1 md:grid-cols-3 gap-16">
@@ -292,7 +305,6 @@ onMounted(()=>{
                         </div>
                     </div>
                 </div>
-
 
                 <div class="bg-[#F4B942] rounded-xl shadow-xl h-60">
                     <div class="bg-white rounded-xl h-full mt-1">
@@ -449,7 +461,7 @@ onMounted(()=>{
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <section v-if="!loading" class="my-5">
             <template v-if="rombels.length > 0">
@@ -458,7 +470,7 @@ onMounted(()=>{
                 </div>
             </template>
             <template v-else>
-                <h1 class="my-10 font-anonymous text-center text-red-500 text-xl">0 Data rombel</h1>
+                <h1 class="my-10 font-anonymous text-center text-red-500 text-xl">0 Data rombel Tahun Ajaran {{ props?.ta?.tahun }}</h1>
             </template>
             <PaginationCard :links="links" :name="'Rombel'" @next="handlenextpage" @page="handlepage" @prev="handleprevpage" class="mt-5" />
         </section>

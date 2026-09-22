@@ -18,9 +18,9 @@ class GetRombelsResource extends JsonResource
             'id' => $this->id,
             'nama' => $this->name,
             'tahun' => $this->tahun->tahun,
-            'tentor' => $this->subjek->tentor->name,
-            'avatar' => $this->subjek->tentor->avatar,
-            'mapel' => $this->subjek->mapel->singkatan,
+            'tentor' => $this->subjek?->tentor?->name ?? 'Tidak memiliki tentor',
+            'avatar' => $this->subjek?->tentor?->avatar ?? null,
+            'mapel' => $this->subjek?->mapel?->singkatan ?? 'Tidak ada mapel',
             'tingkat' => $this->tingkat->tingkat,
             'jenjang' => $this->tingkat->jenjang->slug,
             'siswa' => $this->siswa()->count()

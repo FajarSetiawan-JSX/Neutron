@@ -26,14 +26,6 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
 })
-
-const editGroup = () => {
-    
-}
-
-const manageTeacher = () => {
-    
-}
 </script>
 
 <template>
@@ -68,14 +60,14 @@ const manageTeacher = () => {
                     leave-to-class="scale-95 opacity-0"
                 >
                     <div v-if="isMenuOpen" class="absolute right-0 top-9 z-30 w-36 overflow-hidden rounded-lg border border-slate-200 bg-white p-1 shadow-lg" >
-                        <button type="button" @click="editGroup" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50">
+                        <!-- <button type="button" @click="editGroup" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50">
                             <Pencil class="h-4 w-4 text-slate-400" />
                             <span>Audit</span>
-                        </button>
-                        <button type="button" @click="manageTeacher" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50">
+                        </button> -->
+                        <Menu :href="route('admin.rombel.pengajar', props?.rombel?.id)" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50">
                             <GraduationCap class="h-4 w-4 text-slate-400"/>
                             <span>Pengajar</span>
-                        </button>
+                        </Menu>
                     </div>
                 </Transition>
             </div>
@@ -95,7 +87,7 @@ const manageTeacher = () => {
             </span>
         </div>
         <div class="mt-4 flex items-center gap-3">
-            <img
+            <img v-if="props?.rombel?.avatar"
                 :src="props?.rombel?.avatar ? `/storage/${props?.rombel?.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(props?.rombel?.tentor)}&background=DC2626&color=fff`"
                 class="w-10 h-10 rounded-full"
             />
@@ -111,5 +103,6 @@ const manageTeacher = () => {
         <Menu :href="route('admin.rombel.siswa', props?.rombel?.id)" class="mt-4 p-2 w-full text-center block rounded-lg border border-rose-300 bg-white text-sm font-medium text-rose-500 hover:bg-rose-50 active:scale-95 transition-all duration-300">
             Detail siswa
         </Menu>
+        
     </div>
 </template>

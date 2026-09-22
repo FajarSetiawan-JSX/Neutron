@@ -85,6 +85,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('Admin')->group(function ()
     Route::get('/nilai', [NilaiController::class, 'index']);
 
     Route::patch('/siswa/status/{id}', [SiswaController::class, 'status']);
+    Route::patch('/rombel/{id}/subjek', [RombelController::class, 'updatetentor']);
     Route::get('/siswa/{id}/rombel/{tahun}', [SiswaController::class, 'rombel']);
     Route::delete('/siswa/{id}/rombel/{rombel}', [SiswaController::class, 'keluarrombel']);
     Route::get('/siswa/{id}/rombel/{tahun}/saran', [SiswaController::class, 'rombelsaran']);

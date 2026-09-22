@@ -5,7 +5,7 @@ import AnimatedGlowingSearchBar from '@/Components/21Dev/AnimatedGlowingSearchBa
 import { usePage } from '@inertiajs/vue3';
 import { Line } from "vue-chartjs";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from "chart.js";
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
 import PaginationCard from '@/Components/PaginationCard.vue';
 import axios from 'axios';
@@ -57,6 +57,13 @@ async function get(page = 1) {
         loading.value = false;
     }
 }
+watch(()=>search.value, (newsearch)=>{
+    if(newsearch){
+        setTimeout(()=>{
+            get()
+        }, 500)
+    }
+},{immediate:true});
 function handleprevpage(page){
     if(page){
         get(page);
@@ -112,7 +119,7 @@ onMounted(()=>{
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">

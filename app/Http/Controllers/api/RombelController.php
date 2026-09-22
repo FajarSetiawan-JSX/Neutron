@@ -193,6 +193,30 @@ class RombelController extends Controller
         }
     }
 
+    public function updatetentor(Request $request, $id){
+        $valid = Validator::make($request->all(), [
+            'subjek' => 'required|exists:subjek_tentors,id',
+        ], [
+        ])->validate();
+        DB::beginTransaction();
+        try {
+            $rombel = Rombel::where('id', '=', $id)->first();
+            $rombel->update([
+                'subjek_id' => $valid['subjek'],
+            ]);
+            DB::commit();
+            return response()->json(['message' => 'Berhasil memperbarui pengajar rombel']);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error([
+                'pesan' => $e->getMessage(),
+                'baris' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */

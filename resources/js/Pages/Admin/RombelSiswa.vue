@@ -5,7 +5,7 @@ import axios from 'axios';
 import { usePage } from '@inertiajs/vue3';
 import AnimatedGlowingSearchBar from '@/Components/21Dev/AnimatedGlowingSearchBar.vue';
 import { CalendarDays, Layers, Users, BookOpen } from "lucide-vue-next";
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import PaginationCard from '@/Components/PaginationCard.vue';
 import { eror } from '@/Helper.js/Toast';
 import PrimaryLoading from '@/Components/21Dev/PrimaryLoading.vue';
@@ -34,14 +34,21 @@ async function get(page = 1) {
                 search: search.value
             }
         });
-        siswas.value = response?.data?.data;
-        links.value = response?.data?.meta;
+        siswas.value = response?.data?.data ?? [];
+        links.value = response?.data?.meta ?? {};
     }catch(error){
         eror(error?.response?.status, error?.response?.data?.message);
     }finally{
         loading.value = false;
     }
 }
+watch(()=>search.value, (newsearch)=>{
+    if(newsearch){
+        setTimeout(()=>{
+            get()
+        }, 500)
+    }
+},{immediate:true});
 function handleprevpage(page){
     if(page){
         get(page);
@@ -86,7 +93,7 @@ onMounted(()=>{
                 </h1>
             </div>
             <div class="hidden md:block flex-1 max-w-md mx-8">
-                <AnimatedGlowingSearchBar />
+                <AnimatedGlowingSearchBar v-model="search" />
                 <!-- <input type="text" placeholder="Search..." class="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2 outline-none focus:border-red-500"> -->
             </div>
             <div class="flex items-center gap-3">
@@ -121,7 +128,7 @@ onMounted(()=>{
                                 {{ props?.rombel?.name }}
                             </h2>
                             <p class="text-xs text-slate-500">{{ props?.rombel?.deskripsi ?? '' }}</p>
-                            <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500">
+                            <div data-aos="fade-up" class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500">
                                 <div>
                                     <span class="font-sm font-semibold text-slate-700">
                                         {{ props?.rombel?.subjek?.tentor?.name }}
@@ -132,7 +139,7 @@ onMounted(()=>{
                     </div>
                 </div>
                 <div class="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
-                    <div class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+                    <div data-aos="zoom-in" data-aos-offset="0" class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
                         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                             <Layers class="h-5 w-5" :stroke-width="1.8" />
                         </div>
@@ -145,7 +152,7 @@ onMounted(()=>{
                             </p>
                         </div>
                     </div>
-                    <div class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+                    <div data-aos="zoom-in" data-aos-delay="300" data-aos-offset="0" class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
                         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                             <Users class="h-5 w-5" :stroke-width="1.8" />
                         </div>
@@ -158,7 +165,7 @@ onMounted(()=>{
                             </p>
                         </div>
                     </div>
-                    <div class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+                    <div data-aos="zoom-in" data-aos-delay="600" data-aos-offset="0" class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
                         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
                             <BookOpen class="h-5 w-5" :stroke-width="1.8" />
                         </div>
@@ -172,7 +179,7 @@ onMounted(()=>{
                             </p>
                         </div>
                     </div>
-                    <div class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+                    <div data-aos="zoom-in" data-aos-delay="900" data-aos-offset="0" class="flex min-h-[100px] items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
                         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
                             <CalendarDays class="h-5 w-5" :stroke-width="1.8" />
                         </div>
@@ -181,7 +188,7 @@ onMounted(()=>{
                                 Pertemuan
                             </p>
                             <p class="mt-1 text-sm font-semibold text-orange-600">
-                                12 Pertemuan
+                                {{ props?.rombel?.pertemuan?.length }} Pertemuan
                             </p>
                         </div>
                     </div>
@@ -232,7 +239,7 @@ onMounted(()=>{
                                             <td class="px-4 py-3">{{ siswa?.nis }}</td>
                                             <td class="px-4 py-3 max-w-[12rem] truncate">{{ siswa?.sekolah }}</td>
                                             <td class="px-4 py-3">{{ siswa?.kelas }}</td>
-                                            <td class="px-4 py-3 flex items-center justify-end relative">
+                                            <!-- <td class="px-4 py-3 flex items-center justify-end relative">
                                                 <button @click.stop="toggleMenu(siswa.id)" class="inline-flex items-center text-sm font-medium hover:bg-gray-100 p-1.5 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none" type="button">
                                                     <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -259,12 +266,12 @@ onMounted(()=>{
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </td>
+                                            </td> -->
                                         </tr>
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="6">
+                                            <td colspan="5">
                                                 <h1 class="my-5 font-anonymous text-red-500 text-center">Tidak ada data siswa</h1>
                                             </td>
                                         </tr>

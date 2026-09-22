@@ -36,7 +36,7 @@ class SiswaController extends Controller
      */
     public function index(Request $request)
     {
-        $siswa = Siswa::where('lulus', '=', 0)->with('kelas', 'mapel');
+        $siswa = Siswa::where('lulus', '=', 0)->orderBy('nama', 'asc')->with('kelas', 'mapel');
         if ($request->filled('search')) {
             $siswa = $siswa->where('nama', 'like', '%' . $request->search . '%');
         }
@@ -527,7 +527,6 @@ class SiswaController extends Controller
             })->with(['subjek.mapel', 'pertemuan.absensi.nilai.ujian'])->get();
             $absen = $rombels->map(function ($rombel) use ($start, $end, $idsiswa) {
                 $total = Pertemuan::whereBetween('created_at', [$start, $end])->where('rombel_id', '=', $rombel->id)->where('tipe_id', '=', 1)->count();
-
                 $absen = Absensi::whereBetween('created_at', [$start, $end])->whereHas('siswa.siswa', function ($query) use ($idsiswa) {
                     $query->where('id', '=', $idsiswa);
                 })->whereHas('pertemuan.rombel', function ($q) use ($rombel) {
@@ -538,8 +537,12 @@ class SiswaController extends Controller
                     $q->where('nama', '=', 'Pertemuan');
                 })->count();
 
-                $tambahan = $absen->whereHas('pertemuan.tipe', function ($q) {
-                    $q->where('nama', '=', 'Tambahan');
+                $tambahan = Absensi::whereBetween('created_at', [$start, $end])->whereHas('siswa.siswa', function ($query) use ($idsiswa) {
+                    $query->where('id', '=', $idsiswa);
+                })->whereHas('pertemuan.rombel', function ($q) use ($rombel) {
+                    $q->where('id', '=', $rombel->id);
+                })->whereHas('pertemuan.tipe', function ($t) {
+                    $t->where('nama', '=', 'Tambahan');
                 })->count();
 
                 return [
