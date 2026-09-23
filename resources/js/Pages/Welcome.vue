@@ -90,7 +90,7 @@ onMounted(()=>{
                 <div class="h-64 w-full">
                     <HyperText text="Welcome To" :duration="1200" :delay="0" class="text-6xl font-bold font-anonymous text-white" />
                     <HyperText text="Neutron" :duration="800" :delay="1200" class="text-4xl font-bold font-anonymous text-red-500" />
-                    <HyperText text="Purbalingga" :duration="1000" :delay="2000" class="text-6xl font-bold font-anonymous text-white" />
+                    <HyperText text="Purwokerto" :duration="1000" :delay="2000" class="text-6xl font-bold font-anonymous text-white" />
                 </div>
                 <div class="hidden md:block">
                     <h1 data-aos="fade-up" v-for="(title, index) in titles" class="text-3xl text-white font-primary font-semibold inline-block min-w-2 hover:scale-120 duration-200">

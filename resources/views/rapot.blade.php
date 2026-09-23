@@ -30,17 +30,16 @@
                     </div>
 
                     <div style="font-size: 11px; font-weight: bold; color: #374151; margin-top: 3px;">
-                        PURBALINGGA
+                        PURWOKERTO
                     </div>
 
                     <div style="font-size: 8px; margin-top: 5px;">
-                        Jl. Piere Tendean No.18, Purbalingga, Purbalingga Lor,
-                        Kec. Purbalingga, Kabupaten Purbalingga,
-                        Jawa Tengah 53311
+                        Jl. Jend. Gatot Subroto, Purwokerto, Sokanegara, Kec. Purwokerto Tim., Kabupaten Banyumas, Jawa
+                        Tengah 53115
                     </div>
 
                     <div style="font-size: 8px; margin-top: 2px;">
-                        Telp 0857-2894-0755
+                        Telp 0811-2946-623
                     </div>
 
                 </td>
@@ -513,7 +512,7 @@
                     padding: 0 10px;">
 
                     <p style="margin: 0;">
-                        Purbalingga, {{ now()->locale('id')->translatedFormat('d F Y') }}
+                        Purwokerto, {{ now()->locale('id')->translatedFormat('d F Y') }}
                     </p>
 
                     <p style="margin: 0;">
@@ -526,7 +525,7 @@
                         style="font-weight: bold;
                         text-decoration: underline;
                         margin: 0;">
-                        H. TRI SANTOSO
+                        M Rizkillah Danar Raman
                     </p>
 
                 </td>
@@ -553,7 +552,7 @@
                         style="font-weight: bold;
                         text-decoration: underline;
                         margin: 0;">
-                        Aryanto Tri Kusumo, S.Pd.
+                        Subuh Santoso
                     </p>
 
                 </td>
@@ -573,7 +572,7 @@
             text-align: center;">
 
             Dokumen ini dicetak secara elektronik oleh sistem informasi akademik
-            Neutron cabang Purbalingga.
+            Neutron cabang Purwokerto.
 
         </div>
     </div>
